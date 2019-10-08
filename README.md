@@ -1,2 +1,5 @@
 # iSMC
 The integrated Sequentially Markovian Coalescent
+
+- INSTALL file provides instruction on how to compile iSMC
+- the 'doc/' directory contains annotated option files discribing supported options, as well as one running example.
