@@ -1,0 +1,75 @@
+# --------------------------------------------------------------------------------------
+#                                     iSMC Options File
+# --------------------------------------------------------------------------------------
+
+// This option specifies a string that will be appended to key output files
+dataset_label = MyDataset
+
+// iSMC accepts multiple input file types (string):
+// VCF: should be accompanied by a mask file in FASTA or BED format (below)
+// cVCF: "complete" VCF with all callable sites (absent positions will be masked by iSMC)
+// FASTA: N's and gaps will be masked by iSMC
+// SNP: the format used in the simulation study, output by the script general_simulations.R
+input_file_type = //VCF, cVCF, FASTA, SNP
+
+// The relative path to the sequence file (string)
+sequence_file_path = 
+
+// The relative path to the mask file (string, needed only when input_file_type = 'VCF')
+mask_file_path = 
+
+// iSMC accepts mask files in either FASTA or BED format (string)
+// NOTE: This file must contain only the masking for the blocks present in the sequence file,
+// and in the exact same order
+mask_file_type // none (DEFAULT), FASTA, BED
+
+// iSMC can read compressed files (string)
+seq_compression_type = //none (DEFAULT), gzip, bgzip 
+mask_compression_type = //none (DEFAUL), gzip, bgzip
+
+// The relative path to a tsv file specifying one genomic 'block' per line (eg chromosome or scaffold)
+// The 1st column is the block ID (eg chr1)
+// The 2nd is the start coordinate of the block mapped to the reference genome
+// The 3rd is the end coordinate of the block mapped to the reference genome
+// NOTE: start and end coordinates are relative to the block, meaning it restarts
+// e.g. at every chromosome. 
+// The 4th is 0 for all blocks and the 5th is the difference betwee 3rd & 2nd columns
+// NOTE: an example file is given in the 'example' directory
+tab_file_path = 
+
+// When data is provided in either FASTA or SNP format (ie phased) and multiple haplotypes
+// are available, iSMC can combine them in user-defined pairs. These must be specified
+// as integers within parenthesis and separated by commas, indexed from 0. For example, to 
+// arrange three haplotypes into two pairs of genomes, where the first pair is made up of
+// haplotypes #1 and #2 and the second pair is made up of haplotypes #2 and #3, write:
+diploid_indices = (0,1,1,2) // DEFAULT = (0,1)
+
+// The two main steps of iSMC (boolean).
+// For convenience, decoding can be executed after optimisation (see Main text and Methods)
+optimize = true // true (DEFAULT) or false
+decode = true // true (DEFAULT) or false
+
+// Integer specifying no. of CPUs iSMC is allowed to use
+// Having as many CPUs as the product of no. chromosomes x no. diploids will make it faster
+number_threads = // DEFAULT = iSMC detects the number of available threads at run-time
+
+// Boolean that allows the user to fine-tune the trade-off
+// between execution time and memory usage (see Methods and Supplemental Note).
+decode_breakpoints_parallel = // false (DEFAULT) or true
+
+// Number of discretized Gamma categories
+// Note: DEFAULT = 1 treats recombination as spatially homogeneous
+number_rho_categories = 5 
+
+// Number of discretized time intervals (integer, DO NOT use scientific notation)
+number_intervals = // DEFAULT = 40
+
+// Tolerance for numerical optimisation (double, DEFAULT = 1e-6)
+function_tolerance = 1e-4
+
+// Window size for decoding (integer, DO NOT use scientific notation).
+// Preferably > 1 Mb.
+fragment_size = 3000000
+
+
+

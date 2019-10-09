@@ -1,0 +1,28 @@
+Dependencies:
+- A C++ compiler, both gcc and clang should work. Recent versions are required, with support for c++11.
+- CMake >= 2.6 for building
+- Bio++ libraries: bpp-core, bpp-seq, bpp-phyl (version >=2.4 required). Can be installed from GitHub (https://github.com/BioPP) or from precompiled packages.
+- The boost-iostreams library
+- The Threads library (usually provided with the c++ compiler installation)
+- The blas and cblas libraries (Atlas library), required for zipHMM.
+- The SimpleZipHMM library, a fork from Mailund's orginal zipHMM library. Can be retrieved from https://gitlab.gwdg.de/molsysevol/simple-ziphmm. Install using:
+  cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local (for a local install)
+  make
+  make install
+
+Installation of iSMC:
+
+cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local (for a local install)
+make
+make install
+
+It is possible to generate a static executable, with all dependencies imbeded, so that it can be copied on a remote computer / cluster:
+
+cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local -DBUILD_STATIC=ON
+make
+make install
+
+The 'ismc' executable will then be copied in $HOME/.local/bin .
+
+On a standard linux workstation, iSMC takes ~ 2 minutes to compile and install once all dependencies are met.
+
