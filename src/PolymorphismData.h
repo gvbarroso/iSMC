@@ -16,7 +16,6 @@
 #include <fstream>
 #include <sstream>
 #include <map>
-#include <boost/bimap.hpp>
 
 //Using boost to read from compressed file
 #include <boost/iostreams/device/file.hpp>

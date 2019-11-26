@@ -34,6 +34,13 @@ mask_compression_type = //none (DEFAUL), gzip, bgzip
 // NOTE: start and end coordinates are relative to the block, meaning it restarts
 // e.g. at every chromosome. 
 // The 4th is 0 for all blocks and the 5th is the difference betwee 3rd & 2nd columns
+// The 6th and 7th columns are bottom and top cut-offs that can be convenient to 'synchronise'
+// coordinates when using ismc_mapper. This can happen when you want to consider a range of sites that
+// matches that of another file. For example, if your sequence data for chromosome 1 starts at position
+// 5000 and goes until position 250000000, and you want to 'synchronise' it with an experimental
+// genetic map that extends from 10000 to 230000000, the 6th and 7th columns of the first line of
+// your tab_file should be  9999 and 229999999.
+// Otherwise, if you want to include all sites, they should be the same as the 2nd and 3rd columns.
 // NOTE: an example file is given in the 'example' directory
 tab_file_path = 
 
