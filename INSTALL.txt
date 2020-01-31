@@ -12,7 +12,7 @@ Dependencies:
 
 Installation of iSMC:
 
-cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local (for a local install)
+cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local -DUSE_LIBSIMPLEZIPHMM=true (for a local install)
 make
 make install
 

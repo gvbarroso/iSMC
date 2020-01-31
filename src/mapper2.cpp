@@ -49,7 +49,7 @@ void readConsensusLandscapes() {
     
 }
 
-//for parsing rate-TMRCA tables when decoding within time intervals (see printTmrcaRatePair() inside MmPsmc.cpp)
+//for parsing rate-TMRCA tables when decoding within time intervals (see printDecodedStates() inside MmPsmc.cpp)
 void parsePairOfLandscapes(Vdouble& rateLandscape, vector< size_t >& tmrcaLandscape, const string& fileName) { 
     
   boost::iostreams::filtering_istream landStream; 

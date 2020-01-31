@@ -71,7 +71,12 @@ int main(int argc, char *argv[]) {
   cout << "*                    iSMC, version 0.0.23                        *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
-  cout << "* Authors: G. Barroso                     Last Modif. 07/10/2019 *" << endl;
+  cout << "*            Recombination                                       *" << endl;
+  cout << "*            A mosaic in the genome                              *" << endl;
+  cout << "*            Endless ancestors                                   *" << endl;
+  cout << "*                                                                *" << endl;
+  cout << "*                                                                *" << endl;
+  cout << "* Authors: G. Barroso                    Last Modif. 30/Jan/2020 *" << endl;
   cout << "*          J. Dutheil                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;
