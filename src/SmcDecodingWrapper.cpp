@@ -499,23 +499,24 @@ void SmcDecodingWrapper::jointlyDecodeFragment_(VVdouble& piMmSmc, size_t fragSt
   size_t numCatRho = mmsmc_ -> getParameterTransitions()[1] -> getNumberOfCategories();
   bool timeRestricted = smcOptions_ -> restrictedModulation();
   
-  //for all diploids, for the fragment of interest, gets new type of obs. states (for each rate with > 1 category)
+  // for all diploids, for the fragment of interest, gets new type of obs. states (for each rate with > 1 category)
   vector< vector < size_t > > rhoObsVector(numDiploids, vector< size_t >(fragLength));
   vector< vector < size_t > > thetaObsVector(numDiploids, vector< size_t >(fragLength));
 
   auto extractInfoDiploid = [&] (size_t diploid_id) {
       
-    //gets posterior matrix
+    // gets posterior matrix
     zipHMM::Matrix postProbMatrix;
     
     string diploidFile = smcOptions_ -> getLabel() + "_diploid_" + TextTools::toString(diploid_id + 1) + "_block_" +
                          TextTools::toString(blockId) + "_file_index_" + TextTools::toString(fragId + 1);
     
+    // "standard" decoding
     mPsmc_ -> getWholePsmcVector()[diploid_id] -> posteriorDecodingUsingZipHMM(fragStart, fragEnd, diploidFile, timeRestricted, postProbMatrix, piMmSmc[diploid_id]); 
     
     vector< size_t > treeSeq = mPsmc_ -> getWholePsmcVector()[diploid_id] -> fetchLocalTrees(postProbMatrix);
     
-    //fills piMmSmc for next fragment
+    // fills piMmSmc for next fragment
     for(size_t j = 0; j < piMmSmc[diploid_id].size(); ++j) { 
       piMmSmc[diploid_id][j] = postProbMatrix(j, postProbMatrix.get_width() - 1);
     }
@@ -539,7 +540,7 @@ void SmcDecodingWrapper::jointlyDecodeFragment_(VVdouble& piMmSmc, size_t fragSt
     size_t batchSize = min(numDiploids, numAvailThreads);
     size_t numBatches = (numDiploids + batchSize - 1) / batchSize;  
     
-    //organises because last batch may have less than batchSize diploids
+    // organises because last batch may have less than batchSize diploids
     vector< size_t > sizeOfBatches(numBatches); 
     for(size_t i = 0; i < numBatches - 1; ++i) {
       sizeOfBatches[i] = batchSize;
@@ -553,7 +554,7 @@ void SmcDecodingWrapper::jointlyDecodeFragment_(VVdouble& piMmSmc, size_t fragSt
       
       for(size_t j = 0; j < numTasks; ++j) {
 
-        size_t diploidIndex = j + i * numTasks;
+        size_t diploidIndex = j + i * numTasks; 
         threadVector[j] = thread(extractInfoDiploid, diploidIndex);
       }
     
@@ -862,7 +863,7 @@ void SmcDecodingWrapper::computeAverageRateOverDiploids_(const string& rate) {
       for(size_t k = 0; k < numDiploids; ++k) {
           
         string file = smcOptions_ -> getLabel() + "_diploid_" + TextTools::toString(k + 1) + "_block_" +
-                      TextTools::toString(i + 1) + "_file_index_" + TextTools::toString(j + 1) + "_estimated_" + rate + ".txt.gz";//+ "_Tmrca." + rate + ".txt.gz"; WARNING for other decoding
+                      TextTools::toString(i + 1) + "_file_index_" + TextTools::toString(j + 1) + "_estimated_" + rate + ".txt.gz";
         
         if(smcOptions_ -> restrictedModulation()) {
           file = smcOptions_ -> getLabel() + "_diploid_" + TextTools::toString(k + 1) + "_block_" +
