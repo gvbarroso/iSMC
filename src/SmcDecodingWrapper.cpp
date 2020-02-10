@@ -806,7 +806,7 @@ void SmcDecodingWrapper::decodeBatchOfBreakpoints_(size_t numAvailThreads, bool 
     
       jointlyDecodeFragment_(piMmSmc, startPos, endPos, blockId, i, numAvailThreads, missing);
 
-      cout << "Joint-decoding done for fragment: " << startPos + 1 << " to " << endPos << endl << endl;
+      cout << "Joint-decoding done for fragment: " << startPos << " to " << endPos << endl << endl;
     }
     
   };

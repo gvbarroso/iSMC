@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 12/04/2018
- * Last modified: 09/09/2019
+ * Last modified: 09/02/2020
  *
  */
 
@@ -91,7 +91,7 @@ public:
   maskCompressionType_(bpp::ApplicationTools::getStringParameter("mask_compression_type", parameterOptions, "none", "", true, 4)),
   splinesType_(bpp::ApplicationTools::getStringParameter("splines_type", parameterOptions, "Sigmoidal", "", true, 4)),  
   thetaVarModel_(bpp::ApplicationTools::getStringParameter("theta_var_model", parameterOptions, "Gamma", "", true, 4)),
-  rhoVarModel_(bpp::ApplicationTools::getStringParameter("rho_var_model",  parameterOptions, "Gamma")),  
+  rhoVarModel_(bpp::ApplicationTools::getStringParameter("rho_var_model",  parameterOptions, "Gamma", "", true, 4)),  
   neVarModel_(bpp::ApplicationTools::getStringParameter("ne_var_model", parameterOptions, "Gamma", "", true, 4)),
   timeDisc_(bpp::ApplicationTools::getStringParameter("time_disc", parameterOptions, "quantiles", "", true, 4)),
   decRate_(bpp::ApplicationTools::getStringParameter("dec_rate", parameterOptions, "rho", "", true, 4)),
