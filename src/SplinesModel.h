@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 21/07/2018
- * Last modified: 04/07/2019
+ * Last modified: 25/02/2020
  *
  */
 
@@ -21,6 +21,9 @@ protected:
   std::shared_ptr< MmSmcEmissionProbabilities > mmsmcep_;
   std::shared_ptr< MmSmcTransitionProbabilities > mmsmctp_;
   std::shared_ptr< MultipleMmPsmc > mPsmc_;
+  
+  std::vector< std::string > ignoreParams_;
+  
   double logLikelihood_;
   double aic_;
   
@@ -36,6 +39,26 @@ public:
   mmsmcep_(mmsmcep),
   mmsmctp_(mmsmctp),
   mPsmc_(mPsmc),
+  ignoreParams_(0),
+  logLikelihood_(-1.),
+  aic_(-1.)
+  {
+    includeParameters_(params);
+  }
+  
+  SplinesModel(std::shared_ptr< MarkovModulatedSmc > mmsmc,
+               std::shared_ptr< MmSmcEmissionProbabilities > mmsmcep,
+               std::shared_ptr< MmSmcTransitionProbabilities > mmsmctp,
+               std::shared_ptr< MultipleMmPsmc > mPsmc,
+               const bpp::ParameterList& params,
+               const std::vector< std::string >& ignoreParams,
+               size_t numberOfKnots,
+               const std::string& splinesType): 
+  Splines(mmsmc, numberOfKnots, splinesType),
+  mmsmcep_(mmsmcep),
+  mmsmctp_(mmsmctp),
+  mPsmc_(mPsmc),
+  ignoreParams_(ignoreParams),
   logLikelihood_(-1.),
   aic_(-1.)
   {
@@ -52,6 +75,7 @@ public:
   mmsmcep_(mmsmcep),
   mmsmctp_(mmsmctp),
   mPsmc_(mPsmc),
+  ignoreParams_(0),
   logLikelihood_(-1.),
   aic_(-1.)
   { }
@@ -79,7 +103,7 @@ public:
     return aic_;
   }
 
-  //returns SMC-related parameters (rho, theta, rho.alpha, r_ii...);
+  //returns SMC-related parameters (rho, rho.alpha, r_ii...);
   //useful to fit a model enforcing flat demography (e.g., to test the effect of neglecting demography)
   bpp::ParameterList fetchNonSplinesParameters();
 

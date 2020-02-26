@@ -31,7 +31,6 @@ void Splines::mapLambdasFromSplines(ParameterList& Lambdas) {
   //fixedKnots_ are placed BETWEEN t0 and tmax
   for(size_t i = 0; i <= fixedKnots_.size(); ++i) { 
     
-      //cout << "knot index: " << i << endl;
     double leftBoundary = 0.;
     if(i > 0) {
       leftBoundary = fixedKnots_[i - 1];
@@ -90,7 +89,7 @@ void Splines::includeSplinesParameters_() {
   //from t = 0. until the last knot:
   for(size_t i = 0; i <= numberOfKnots_; ++i) {
     //intercept values
-     addParameter_(new Parameter("y" + TextTools::toString(i), 1. + pow(-1., i) * .01, &Parameter::R_PLUS_STAR));
+    addParameter_(new Parameter("y" + TextTools::toString(i), 1. + pow(-1., i) * .01, &Parameter::R_PLUS_STAR));
     //first derivatives NOTE the interval constraint should be estimated by computing the range where we can NOT get negative lambda mappings
     addParameter_(new Parameter("y" + TextTools::toString(i) + "_prime", 0., new IntervalConstraint(-1., 1., true, true)));
   }
@@ -101,7 +100,8 @@ void Splines::includeSplinesParameters_() {
   
 double Splines::getPowerOne_(double leftKnot, double rightKnot, size_t index,
                              double leftIntercept, double rightIntercept,
-                             double leftDerivative, double rightDerivative) {
+                             double leftDerivative, double rightDerivative) 
+{
   return leftDerivative - 6. * leftKnot * rightKnot * (rightIntercept - leftIntercept) /
          pow((rightKnot - leftKnot), 3.) + 3. * leftKnot * rightKnot * (leftDerivative + rightDerivative) /
          pow((rightKnot - leftKnot), 2.) - leftKnot * (rightDerivative - leftDerivative) / (rightKnot - leftKnot);
@@ -109,7 +109,8 @@ double Splines::getPowerOne_(double leftKnot, double rightKnot, size_t index,
   
 double Splines::getPowerTwo_(double leftKnot, double rightKnot, size_t index,
                              double leftIntercept, double rightIntercept,
-                             double leftDerivative, double rightDerivative) {
+                             double leftDerivative, double rightDerivative) 
+{
   return 1. / 2. * (rightDerivative - leftDerivative) / (rightKnot - leftKnot) + 3. * (rightKnot + leftKnot) *
          (rightIntercept - leftIntercept) / pow((rightKnot - leftKnot), 3.) - 3. / 2. * (rightKnot + leftKnot) *
          (rightDerivative + leftDerivative) / pow((rightKnot - leftKnot), 2.);
@@ -117,13 +118,15 @@ double Splines::getPowerTwo_(double leftKnot, double rightKnot, size_t index,
   
 double Splines::getPowerThree_(double leftKnot, double rightKnot, size_t index,
                                double leftIntercept, double rightIntercept,
-                               double leftDerivative, double rightDerivative) {
+                               double leftDerivative, double rightDerivative) 
+{
   return - 2. * (rightIntercept - leftIntercept) / pow((rightKnot - leftKnot), 3.) + (rightDerivative + leftDerivative) / pow((rightKnot - leftKnot), 2.);
 }
   
 double Splines::getConstant_(double leftKnot, double rightKnot, size_t index,
                              double leftIntercept, double rightIntercept,
-                             double leftDerivative, double rightDerivative) {
+                             double leftDerivative, double rightDerivative) 
+{
   return leftIntercept - leftKnot * leftDerivative - pow(leftKnot, 2.) * (rightIntercept - leftIntercept) *
          (leftKnot - 3. * rightKnot) / pow((rightKnot - leftKnot), 3.) + 1. / 2. * pow(leftKnot, 2.) *
          (leftDerivative + rightDerivative) * (leftKnot - 3. * rightKnot) / pow((rightKnot - leftKnot), 2.) +

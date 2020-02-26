@@ -110,6 +110,12 @@ void SmcOptimizationWrapper::optimizeParameters(const ParameterList& backupParam
   cout << endl << "Resuming optimisation." << endl;
    
   ParameterList params;
+  params.addParameters(bestParameters_); //non-splines params w/ constraints
+  
+  params.deleteParameter("theta");
+  //coalescence rates will be optimised with splines:
+  for(size_t i = 0; i < mmsmc_ -> getNumberOfIntervals(); ++i) 
+    params.deleteParameter("l" + TextTools::toString(i));
   
   //adds splines params to match partially optimised values 
   for(size_t i = 0; i < backupParams.size(); ++i) {
@@ -117,26 +123,25 @@ void SmcOptimizationWrapper::optimizeParameters(const ParameterList& backupParam
     string candidateSplineHeight = "y" + TextTools::toString(i);
     string candidateSplineDeriv = "y" + TextTools::toString(i) + "_prime";
     
-    if(backupParams.hasParameter(candidateSplineHeight)) { //if knot i existed before
-        
+    if(backupParams.hasParameter(candidateSplineHeight)) //if knot i existed before
+    { 
       params.addParameter(new Parameter(candidateSplineHeight, 1., &Parameter::R_PLUS_STAR));
-      params.addParameter(new Parameter(candidateSplineDeriv, 0.,
-                                      new IntervalConstraint(-1., 1., true, true)));
+      params.addParameter(new Parameter(candidateSplineDeriv, 0., new IntervalConstraint(-1., 1., true, true)));
     }
   }
-  
-  params.addParameters(bestParameters_); //non-splines params w/ constraints
-  
-  params.deleteParameter("theta");
-  //coalescence rates will be optimised with splines:
-  for(size_t i = 0; i < mmsmc_ -> getNumberOfIntervals(); ++i) {
-    params.deleteParameter("l" + TextTools::toString(i));
-  }
-  
   params.matchParametersValues(backupParams);
-  //params.printParameters(cout);
   
-  createAndFitSplinesModels_(params);
+  std::cout << "Testing:\n";
+  params.printParameters(cout);
+  
+  
+  shared_ptr< SplinesModel > smf(new SplinesModel(mmsmc_, mmsmcep_, mmsmctp_, mPsmc_, params,
+                                                  smcOptions_ -> getIgnoredParameters(),
+                                                  smcOptions_ -> getInitNumberOfKnots(),
+                                                  smcOptions_ -> getSplinesTypeOption()));
+
+  fitModel_(smf.get());
+  listOfModels_.push_back(smf);
 
   //updates
   shared_ptr< SplinesModel > bestSplines = selectBestModel();
@@ -246,7 +251,8 @@ void SmcOptimizationWrapper::createAndFitSplinesModels_(ParameterList& params) {
 }
     
 void SmcOptimizationWrapper::fitModel_(SplinesModel* smf) { 
-    
+  
+  std::cout << "\nOptimizing the following parameters:\n";
   smf -> fetchModelParameters().printParameters(cout);
   //smf potentially has both splines parameters and spatial rates parameters
   ReparametrizationFunctionWrapper rfw(smf, smf -> fetchModelParameters()); //reparametrization of all params
@@ -348,8 +354,6 @@ void SmcOptimizationWrapper::fitModel_(SplinesModel* smf) {
   cout << endl << endl << "AIC = " << setprecision(6) << smf -> getAic() << endl;
 
   ParameterList optimisedParams(smf -> getParameters());
-  optimisedParams.addParameter(mmsmc_ -> getParameter("theta")); //since theta was left out from optimisation
-
   cout << endl << "Optimized iSMC parameters:" << endl;
   optimisedParams.printParameters(cout);
 }

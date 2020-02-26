@@ -42,6 +42,7 @@ private:
   
   //characters in mask file that represent position passing filtering criteria
   std::vector< std::string > callableCode_; //default = 1, P
+  std::vector< std::string > ignoredParams_; //default = 1, P
   
   unsigned int numberOfThetaCategories_;
   unsigned int numberOfRhoCategories_;
@@ -100,6 +101,7 @@ public:
   maskFileType_(bpp::ApplicationTools::getStringParameter("mask_file_type", parameterOptions, "none", "", true, 4)),
   tabFilePath_(bpp::ApplicationTools::getAFilePath("tab_file_path", parameterOptions, false, false, "", false, "none", 4)),
   callableCode_(bpp::ApplicationTools::getVectorParameter<std::string>("callable_code", parameterOptions, ',', "1,P", "", true, 4)),
+  ignoredParams_(bpp::ApplicationTools::getVectorParameter<std::string>("ignore_params", parameterOptions, ',', "none", "", true, 4)),
   numberOfThetaCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_theta_categories", parameterOptions, 1, "", true, 4)),
   numberOfRhoCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_rho_categories", parameterOptions, 1, "", true, 4)),
   numberOfNeCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_ne_categories", parameterOptions, 1, "", true, 4)),
@@ -198,6 +200,10 @@ public:
   
   const std::vector< std::string >& getCallableCode() const {
     return callableCode_;
+  }
+  
+  const std::vector< std::string >& getIgnoredParameters() const {
+    return ignoredParams_;
   }
   
   unsigned int getNumberOfThetaCateg() {
