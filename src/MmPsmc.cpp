@@ -92,7 +92,7 @@ vector< size_t > MmPsmc::fetchLocalTrees(const zipHMM::Matrix& postProbMatrix) {
   for(size_t i = 0; i < postProbTrees.size(); ++i) { //for all sites
       
     maxProb = max_element(postProbTrees[i].begin(), postProbTrees[i].end());
-    treeSequence[i] = distance(postProbTrees[i].begin(), maxProb);
+    treeSequence[i] = static_cast<size_t>(distance(postProbTrees[i].begin(), maxProb)); // Note jdutheil: assuming this is always positive, otherwise this will be buggy!
   }
   return treeSequence;
 }
@@ -109,7 +109,7 @@ vector< size_t > MmPsmc::fetchLocalTrees(const zipHMM::Matrix& postProbMatrix, V
       
     maxProb = max_element(postProbTrees[i].begin(), postProbTrees[i].end());
     treeProbs[i] = *maxProb;
-    treeSequence[i] = distance(postProbTrees[i].begin(), maxProb);
+    treeSequence[i] = static_cast<size_t>(distance(postProbTrees[i].begin(), maxProb));
   }
   return treeSequence;
 }
@@ -133,7 +133,7 @@ void MmPsmc::decodeLocalTmrca(const zipHMM::Matrix& postProbMatrix, const string
       
     maxProb = max_element(postProbTrees[i].begin(), postProbTrees[i].end());
     
-    size_t treeIndex = distance(postProbTrees[i].begin(), maxProb);
+    size_t treeIndex = static_cast<size_t>(distance(postProbTrees[i].begin(), maxProb));
     
     tmrcaStream << mmsmc_ -> getTimeIntervals()[treeIndex] << endl;
   }
@@ -166,7 +166,7 @@ vector< size_t > MmPsmc::fetchLocalRateIndices(const zipHMM::Matrix& postProbMat
   
   for(size_t i = 0; i < postProbRate.size(); ++i) {
     maxProb = max_element(postProbRate[i].begin(), postProbRate[i].end());
-    rateSequence[i] = distance(postProbRate[i].begin(), maxProb);
+    rateSequence[i] = static_cast<size_t>(distance(postProbRate[i].begin(), maxProb));
   }
   
   return rateSequence;
@@ -356,13 +356,13 @@ void MmPsmc::computeLocalAverageTmrca(const zipHMM::Matrix& postProbMatrix, cons
 
 //memory-efficient version of the function, directly decodes and writes to file
 void MmPsmc::posteriorDecodingUsingZipHMM(size_t genomicStart, size_t genomicEnd, const string& fileName,
-                                          bool restricted, zipHMM::Matrix& postProbMatrix, bpp::Vdouble& pi) {
+                                          bool restricted, zipHMM::Matrix& postProbMatrix, bpp::Vdouble& vpi) {
   
   //copy fragment (otherwise there is an obvious problem when decoding fragments in parallel)
   vector< unsigned char > copyOfFragment = fetchFragment(genomicStart, genomicEnd);
   
   zipHMM::posterior_decoding(copyOfFragment,
-                             pi, //initialisation probabilities updated per fragment
+                             vpi, //initialisation probabilities updated per fragment
                              mmtp_ -> getExpectedMatrix(),
                              mmep_ -> getExpectedMatrix(),
                              postProbMatrix);
@@ -391,12 +391,12 @@ void MmPsmc::posteriorDecodingUsingZipHMM(size_t genomicStart, size_t genomicEnd
 } 
 
 void MmPsmc::computePosteriorProbs(size_t genomicStart, size_t genomicEnd,
-                                   zipHMM::Matrix& postProbMatrix, Vdouble& pi) {
+                                   zipHMM::Matrix& postProbMatrix, Vdouble& vpi) {
   
   //copy fragment (otherwise there is an obvious problem when decoding fragments in parallel)
   vector< unsigned char > copyOfFragment = fetchFragment(genomicStart, genomicEnd);
   zipHMM::posterior_decoding(copyOfFragment,
-                             pi, //initialisation probabilities updated per fragment
+                             vpi, //initialisation probabilities updated per fragment
                              mmtp_ -> getExpectedMatrix(),
                              mmep_ -> getExpectedMatrix(),
                              postProbMatrix);
@@ -1251,7 +1251,7 @@ void MmPsmc::maskTreeSequence_(vector< size_t >& treeSeq, size_t start, size_t e
 
     if(iter != end_pos) {
 
-      size_t pos = distance(start_pos, iter);
+      size_t pos = static_cast<size_t>(distance(start_pos, iter));
       //mask tree sequence by assigning the "missing" TMRCA state
       treeSeq[pos] = state;
 

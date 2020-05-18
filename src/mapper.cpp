@@ -208,10 +208,10 @@ void writeBinnedLandscapesToFile(const string& rate, const string& label, size_t
     size_t numWindows = blockBinLands[i].front().size(); //all diploids have same seq length
     
     //to plot coordinates in the first and second columns of the bedgraph
-    size_t lowerCut = stol(tabFile[i][5]);  
-    size_t upperCut = stol(tabFile[i][6]);
-    size_t alnEnd = stol(tabFile[i][2]) - 1;
-    size_t starts = stol(tabFile[i][1]) - 1; // -1 to index from 0
+    size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]);  
+    size_t upperCut = TextTools::to<size_t>(tabFile[i][6]);
+    size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1;
+    size_t starts = TextTools::to<size_t>(tabFile[i][1]) - 1; // -1 to index from 0
         
     if(lowerCut > starts) {
       starts =  lowerCut;
@@ -276,10 +276,10 @@ void writeBinnedInfoToFile(const string& prefix, size_t binSize, const vector< v
   for(size_t i = 0; i < binData.size(); ++i) { //blocks
     
    //to plot coordinates in the first and second columns of the bedgraph
-    size_t lowerCut = stol(tabFile[i][5]);  
-    size_t upperCut = stol(tabFile[i][6]);
-    size_t alnEnd = stol(tabFile[i][2]) - 1;
-    size_t starts = stol(tabFile[i][1]) - 1; // -1 to index from 0
+    size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]);  
+    size_t upperCut = TextTools::to<size_t>(tabFile[i][6]);
+    size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1;
+    size_t starts = TextTools::to<size_t>(tabFile[i][1]) - 1; // -1 to index from 0
        
     if(lowerCut > starts) {
       starts =  lowerCut;
@@ -360,7 +360,7 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
   
   for(size_t i = 0; i < numUniqueBlocks; ++i) {
     
-    size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+    auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     VVdouble blockLand(numDiploids, Vdouble(0)); //indv -> site
         
     for(size_t j = 0; j < numDiploids; ++j) {
@@ -395,7 +395,7 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
       
     for(size_t i = 0; i < numUniqueBlocks; ++i) {
       
-     size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+     auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
      
      for(size_t j = 0; j < focalNumFrags; ++j) {
           
@@ -434,7 +434,7 @@ VVVdouble readTmrcaLandscapes(const string& label, size_t numDiploids,
   
   for(size_t i = 0; i < numUniqueBlocks; ++i) {
     
-    size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+    auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     
     VVdouble blockLand(numDiploids, Vdouble(0)); //indv -> site
         
@@ -551,7 +551,7 @@ int main(int argc, char *argv[]) {
   
   string label = ApplicationTools::getStringParameter("dataset_label", params, ""); 
   string rate = ApplicationTools::getStringParameter("bin_rate", params, "rho", "", true, 4);
-  string tabFilePath = ApplicationTools::getAFilePath("tab_file_path", params, "");
+  string tabFilePath = ApplicationTools::getAFilePath("tab_file_path", params, true, true, "");
   
   //are there TMRCA landscapes to bin?
   bool tmrca = ApplicationTools::getBooleanParameter("tmrca", params, false, "", true, 4);
@@ -603,11 +603,11 @@ int main(int argc, char *argv[]) {
     
     //this assumes each block is a chr or scaffold
     //in the original seq file and has not been further chopped
-    size_t lowerCut = stol(tabFile[i][5]);  
-    size_t upperCut = stol(tabFile[i][6]);
+    size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]);  
+    size_t upperCut = TextTools::to<size_t>(tabFile[i][6]);
     
-    size_t alnStart = stol(tabFile[i][1]) - 1; // -1 to index from 0
-    size_t alnEnd = stol(tabFile[i][2]) - 1; // -1 to index from 0
+    size_t alnStart = TextTools::to<size_t>(tabFile[i][1]) - 1; // -1 to index from 0
+    size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1; // -1 to index from 0
     
     size_t lowerStart = 0;
     
@@ -713,11 +713,12 @@ int main(int argc, char *argv[]) {
         
         for(unsigned int l = 0; l < numWindows; ++l) {
        
-          size_t startPos = l * binSize;
-          size_t endPos = (l + 1) * binSize - 1;
+          //Note (jdutheil): startPos and endPos have to be signed integers. The conversion might lead to an error if numbers are very large
+	  VVVdouble::difference_type startPos = static_cast<VVVdouble::difference_type>(l * binSize);
+          VVVdouble::difference_type endPos = static_cast<VVVdouble::difference_type>((l + 1) * binSize - 1);
         
           if(endPos >= numSites) { 
-            endPos = numSites - 1;
+            endPos = static_cast<VVVdouble::difference_type>(numSites - 1);
           }
 
           double binLen = static_cast< double >(endPos - startPos + 1);

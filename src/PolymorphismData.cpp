@@ -167,8 +167,8 @@ void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
       
-    startCoords[i] = stol(chrTable[i][1]);
-    endCoords[i] = stol(chrTable[i][2]);
+    startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
+    endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }  
   
   setBreakpoints_(startCoords, endCoords);
@@ -222,8 +222,8 @@ void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) {
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
       
-    startCoords[i] = stol(chrTable[i][1]);
-    endCoords[i] = stol(chrTable[i][2]);
+    startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
+    endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }  
   
   setBreakpoints_(startCoords, endCoords);
@@ -280,8 +280,8 @@ void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput, filtering_is
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
       
-    startCoords[i] = stol(chrTable[i][1]);
-    endCoords[i] = stol(chrTable[i][2]);
+    startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
+    endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }
   
   setBreakpoints_(startCoords, endCoords);
@@ -319,8 +319,8 @@ void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput) {
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
       
-    startCoords[i] = stol(chrTable[i][1]);
-    endCoords[i] = stol(chrTable[i][2]);
+    startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
+    endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }
   
   setBreakpoints_(startCoords, endCoords);
