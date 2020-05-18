@@ -44,8 +44,11 @@ void PolymorphismData::processInputSequences() {
     throw Exception("iSMC::Mis-specified sequence compression type.");
   }  
   
+  cout << "Opening sequence file: " << opt_ -> getSequenceFileName();
+  cout.flush();
   ifstream seqFile(opt_ -> getSequenceFileName(), std::ios_base::in | std::ios_base::binary);  
   seqStream.push(seqFile);
+  cout << " Done." << endl;
   
   if(!seqFile.is_open()) {
     throw bpp::Exception("iSMC::could not open seq. file: " + opt_ -> getSequenceFileName());    
