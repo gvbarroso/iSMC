@@ -25,7 +25,7 @@ void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, c
   for(size_t i = 0; i < timeIntervals_.size(); ++i) {
       
     if(!lambdaVector_.hasParameter("l" + bpp::TextTools::toString(i))){
-      lambdaVector_.addParameter(new bpp::Parameter("l" + bpp::TextTools::toString(i), 1., &bpp::Parameter::R_PLUS_STAR));
+      lambdaVector_.addParameter(new bpp::Parameter("l" + bpp::TextTools::toString(i), 1., bpp::Parameter::R_PLUS_STAR));
     }
   }
   

@@ -35,9 +35,9 @@ public:
   averageCoalescenceTime_(smcOptions -> getNumberOfIntervals()),
   lambdaVector_()
   { 
-    addParameter_(new bpp::Parameter("theta", 1., &bpp::Parameter::R_PLUS_STAR));
+    addParameter_(new bpp::Parameter("theta", 1., bpp::Parameter::R_PLUS_STAR));
     computeMeanThetaAcrossDataSet_(sequences);
-    addParameter_(new bpp::Parameter("rho", getParameterValue("theta") / 2., &bpp::Parameter::R_PLUS_STAR));
+    addParameter_(new bpp::Parameter("rho", getParameterValue("theta") / 2., bpp::Parameter::R_PLUS_STAR));
     setTimeIntervals(smcOptions -> getNumberOfIntervals(),
                      smcOptions -> getTimeDisc(),
                      smcOptions -> getTmax());
@@ -51,9 +51,9 @@ public:
   averageCoalescenceTime_(numIntervals),
   lambdaVector_()
   { 
-    addParameter_(new bpp::Parameter("theta", 1., &bpp::Parameter::R_PLUS_STAR));
+    addParameter_(new bpp::Parameter("theta", 1., bpp::Parameter::R_PLUS_STAR));
     computeMeanThetaAcrossDataSet_(sequences);
-    addParameter_(new bpp::Parameter("rho", getParameterValue("theta") / 2., &bpp::Parameter::R_PLUS_STAR));
+    addParameter_(new bpp::Parameter("rho", getParameterValue("theta") / 2., bpp::Parameter::R_PLUS_STAR));
     
     setTimeIntervals(numIntervals, timeDisc, tMax);
   }

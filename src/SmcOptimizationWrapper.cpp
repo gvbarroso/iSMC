@@ -119,9 +119,9 @@ void SmcOptimizationWrapper::optimizeParameters(const ParameterList& backupParam
     
     if(backupParams.hasParameter(candidateSplineHeight)) { //if knot i existed before
         
-      params.addParameter(new Parameter(candidateSplineHeight, 1., &Parameter::R_PLUS_STAR));
+      params.addParameter(new Parameter(candidateSplineHeight, 1., Parameter::R_PLUS_STAR));
       params.addParameter(new Parameter(candidateSplineDeriv, 0.,
-                                      new IntervalConstraint(-1., 1., true, true)));
+                                      shared_ptr<Constraint>(new IntervalConstraint(-1., 1., true, true))));
     }
   }
   
