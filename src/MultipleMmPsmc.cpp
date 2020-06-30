@@ -136,7 +136,7 @@ double MultipleMmPsmc::fetchMinimumLogLikelihood() {
   return individualLikelihoods.front();
 }
 
-void MultipleMmPsmc::jointForward(const vector< vector< size_t > >& obsVector, const VVdouble& rateTrans, const Vdouble& pi,
+void MultipleMmPsmc::jointForward(const vector< vector< size_t > >& obsVector, const VVdouble& rateTrans, const Vdouble& vpi,
                                   const VVdouble& rateEmiss, Vdouble& forwardScales, VVdouble& rateForwardMatrix) {
      
  // NOTE Should we weight emission probs by TMRCA of each diploid? By 1 - shannon_eq of each diploid?
@@ -158,7 +158,7 @@ void MultipleMmPsmc::jointForward(const vector< vector< size_t > >& obsVector, c
     }
     
     //cout << "joint-emiss = " << setprecision(16) << jointEmissions << "; ";
-    rateForwardMatrix[0][j] = pi[j] * jointEmissions;
+    rateForwardMatrix[0][j] = vpi[j] * jointEmissions;
     //cout << "fwd = " << setprecision(16) << rateForwardMatrix[0][j] << endl;
     scale += rateForwardMatrix[0][j];
   }

@@ -342,7 +342,7 @@ int main(int argc, char *argv[]) {
       
       for(size_t i = 0; i < paramNames.size(); ++i) { //loops over paramNames because optimParams potentially changes size 
           
-        Constraint* paramConstraint = optimParams.getParameter(paramNames[i]).getConstraint();
+        shared_ptr<Constraint> paramConstraint = optimParams.getParameter(paramNames[i]).getConstraint();
         
         //cf lines 203 / 204 of ThreePointsNumericalDerivative.cpp
         double h = (1. + abs(optimParams.getParameterValue(paramNames[i]))) * tpnd -> getInterval();
@@ -491,7 +491,7 @@ int main(int argc, char *argv[]) {
     //Individual decoding + average landscape + joint-decoding + Baum-Welch
     if(multiMmPsmc -> getWholePsmcVector().size() > 1) { 
       
-      size_t numObsStates = emissions -> getNumberOfObservedStates(); 
+      //size_t numObsStates = emissions -> getNumberOfObservedStates(); 
       bool missing = false; //to trigger filtering of missing sites in HMM layers: numObsStates > 2
      
       decoder.decodeDataset(missing);

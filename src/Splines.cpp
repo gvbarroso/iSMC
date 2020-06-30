@@ -89,13 +89,13 @@ void Splines::includeSplinesParameters_() {
   //from t = 0. until the last knot:
   for(size_t i = 0; i <= numberOfKnots_; ++i) {
     //intercept values
-    addParameter_(new Parameter("y" + TextTools::toString(i), 1. + pow(-1., i) * .01, &Parameter::R_PLUS_STAR));
+     addParameter_(new Parameter("y" + TextTools::toString(i), 1. + pow(-1., i) * .01, Parameter::R_PLUS_STAR));
     //first derivatives NOTE the interval constraint should be estimated by computing the range where we can NOT get negative lambda mappings
-    addParameter_(new Parameter("y" + TextTools::toString(i) + "_prime", 0., new IntervalConstraint(-1., 1., true, true)));
+    addParameter_(new Parameter("y" + TextTools::toString(i) + "_prime", 0., shared_ptr<Constraint>(new IntervalConstraint(-1., 1., true, true))));
   }
   //at tmax:
-  addParameter_(new Parameter("y" + TextTools::toString(numberOfKnots_ + 1), 1., &Parameter::R_PLUS_STAR));
-  addParameter_(new Parameter("y" + TextTools::toString(numberOfKnots_ + 1) + "_prime", 0., new IntervalConstraint(-1., 1., true, true)));
+  addParameter_(new Parameter("y" + TextTools::toString(numberOfKnots_ + 1), 1., Parameter::R_PLUS_STAR));
+  addParameter_(new Parameter("y" + TextTools::toString(numberOfKnots_ + 1) + "_prime", 0., shared_ptr<Constraint>(new IntervalConstraint(-1., 1., true, true))));
 }
   
 double Splines::getPowerOne_(double leftKnot, double rightKnot, size_t index,

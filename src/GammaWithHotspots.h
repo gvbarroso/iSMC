@@ -23,7 +23,7 @@ public:
     GammaDiscreteDistribution(numGammaCategories, initialShape, initialRate)
     { 
       //hotspot intensity
-      addParameter_(new bpp::Parameter("Gamma.heat", initialHeat, new bpp::IntervalConstraint(heatConstraint[0], heatConstraint[1], true, true)));    
+      addParameter_(new bpp::Parameter("Gamma.heat", initialHeat, std::shared_ptr<bpp::Constraint>(new bpp::IntervalConstraint(heatConstraint[0], heatConstraint[1], true, true))));    
     }
 
 };

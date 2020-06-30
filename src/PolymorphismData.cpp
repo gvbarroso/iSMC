@@ -44,8 +44,11 @@ void PolymorphismData::processInputSequences() {
     throw Exception("iSMC::Mis-specified sequence compression type.");
   }  
   
+  cout << "Opening sequence file: " << opt_ -> getSequenceFileName();
+  cout.flush();
   ifstream seqFile(opt_ -> getSequenceFileName(), std::ios_base::in | std::ios_base::binary);  
   seqStream.push(seqFile);
+  cout << " Done." << endl;
   
   if(!seqFile.is_open()) {
     throw bpp::Exception("iSMC::could not open seq. file: " + opt_ -> getSequenceFileName());    
@@ -164,8 +167,8 @@ void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
       
-    startCoords[i] = stol(chrTable[i][1]);
-    endCoords[i] = stol(chrTable[i][2]);
+    startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
+    endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }  
   
   setBreakpoints_(startCoords, endCoords);
@@ -219,8 +222,8 @@ void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) {
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
       
-    startCoords[i] = stol(chrTable[i][1]);
-    endCoords[i] = stol(chrTable[i][2]);
+    startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
+    endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }  
   
   setBreakpoints_(startCoords, endCoords);
@@ -277,8 +280,8 @@ void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput, filtering_is
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
       
-    startCoords[i] = stol(chrTable[i][1]);
-    endCoords[i] = stol(chrTable[i][2]);
+    startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
+    endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }
   
   setBreakpoints_(startCoords, endCoords);
@@ -316,8 +319,8 @@ void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput) {
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
       
-    startCoords[i] = stol(chrTable[i][1]);
-    endCoords[i] = stol(chrTable[i][2]);
+    startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
+    endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }
   
   setBreakpoints_(startCoords, endCoords);

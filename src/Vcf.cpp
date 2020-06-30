@@ -163,8 +163,8 @@ void Vcf::maskSequences(filtering_istream& mask, vector< vector< string > >& chr
   size_t chrCounter = 0;
   vector< string > splitTabLine = chrTable.at(chrCounter);
   //start coordinate of chr in VCF
-  size_t startChrVcf = stol(splitTabLine[1]);
-  size_t endChrVcf = stol(splitTabLine[2]);
+  size_t startChrVcf = TextTools::to<size_t>(splitTabLine[1]);
+  size_t endChrVcf = TextTools::to<size_t>(splitTabLine[2]);
    
   while(getline(mask, maskLine)) { 
     
@@ -180,8 +180,8 @@ void Vcf::maskSequences(filtering_istream& mask, vector< vector< string > >& chr
       size_t chrStart = chrBreaks[chrCounter].first; 
     
       //start and end of coordinates (mapped to ref. genome) of segment in BED file (indexed from ZERO)
-      size_t startBedInterval = stol(splitMaskLine[1]);
-      size_t endBedInterval = stol(splitMaskLine[2]);
+      size_t startBedInterval = TextTools::to<size_t>(splitMaskLine[1]);
+      size_t endBedInterval = TextTools::to<size_t>(splitMaskLine[2]);
       
       //only masks site if it's actually present in the VCF
       if(startBedInterval >= startChrVcf && endBedInterval <= endChrVcf) { 
@@ -199,7 +199,7 @@ void Vcf::maskSequences(filtering_istream& mask, vector< vector< string > >& chr
       ++chrCounter;
             
       splitTabLine = chrTable.at(chrCounter);
-      startChrVcf = stol(splitTabLine[1]);
+      startChrVcf = TextTools::to<size_t>(splitTabLine[1]);
     }
     
     ++maskLineCounter;
@@ -255,7 +255,7 @@ void Vcf::parseHighQualitySite_(const vector< string >& splitLine,
         throw bpp::Exception("iSMC::VCF position is likely duplicated = " + TextTools::toString(siteCoord));
       }
       
-      snpCallings_[i].insert(snpCallings_[i].end(), runOfState, stdState_); 
+      snpCallings_[i].insert(snpCallings_[i].end(), static_cast<size_t>(runOfState), stdState_); 
     }
     
     //calls genotype

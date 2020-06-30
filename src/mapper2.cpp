@@ -69,8 +69,8 @@ void parsePairOfLandscapes(Vdouble& rateLandscape, vector< size_t >& tmrcaLandsc
       
       boost::split(splitLine, line, [](char c){ return c == '\t'; });
       
-      size_t tmrcaIndex = stol(splitLine[0]); //the time index
-      double rateVal = stod(splitLine[1]); //the posterior average rate within that time index
+      size_t tmrcaIndex = TextTools::to<size_t>(splitLine[0]); //the time index
+      double rateVal = TextTools::to<double>(splitLine[1]); //the posterior average rate within that time index
       
       tmrcaLandscape.push_back(tmrcaIndex);
       rateLandscape.push_back(rateVal);
@@ -216,10 +216,10 @@ void writeBinnedLandscapesToFile(const string& rate, const string& label, size_t
     size_t numWindows = blockBinLands[i].front().size(); //all diploids have same seq length
     
     //to plot coordinates in the first and second columns of the bedgraph
-    size_t lowerCut = stol(tabFile[i][5]);  
-    size_t upperCut = stol(tabFile[i][6]);
-    size_t alnEnd = stol(tabFile[i][2]) - 1;
-    size_t starts = stol(tabFile[i][1]) - 1; // -1 to index from 0
+    size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]);  
+    size_t upperCut = TextTools::to<size_t>(tabFile[i][6]);
+    size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1;
+    size_t starts = TextTools::to<size_t>(tabFile[i][1]) - 1; // -1 to index from 0
         
     if(lowerCut > starts) {
       starts =  lowerCut;
@@ -284,10 +284,10 @@ void writeBinnedInfoToFile(const string& prefix, size_t binSize, const vector< v
   for(size_t i = 0; i < binData.size(); ++i) { //blocks
     
    //to plot coordinates in the first and second columns of the bedgraph
-    size_t lowerCut = stol(tabFile[i][5]);  
-    size_t upperCut = stol(tabFile[i][6]);
-    size_t alnEnd = stol(tabFile[i][2]) - 1;
-    size_t starts = stol(tabFile[i][1]) - 1; // -1 to index from 0
+    size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]);  
+    size_t upperCut = TextTools::to<size_t>(tabFile[i][6]);
+    size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1;
+    size_t starts = TextTools::to<size_t>(tabFile[i][1]) - 1; // -1 to index from 0
        
     if(lowerCut > starts) {
       starts =  lowerCut;
@@ -369,7 +369,7 @@ void readTmrcaRateLandscapes(VVVdouble& allRateLandscapes, vector< vector < vect
   
   for(size_t i = 0; i < numUniqueBlocks; ++i) {
     
-    size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+    auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     VVdouble blockRate(numDiploids, Vdouble(0)); //indv -> site
     vector< vector< size_t > > blockTmrca(numDiploids, vector< size_t >(0)); //indv -> site
     
@@ -493,7 +493,7 @@ int main(int argc, char *argv[]) {
   
   string label = ApplicationTools::getStringParameter("dataset_label", params, ""); 
   string rate = ApplicationTools::getStringParameter("bin_rate", params, "rho", "", true, 4);
-  string tabFilePath = ApplicationTools::getAFilePath("tab_file_path", params, "");
+  string tabFilePath = ApplicationTools::getAFilePath("tab_file_path", params, true, true, "");
   vector< size_t > tmrcaBoundaries = ApplicationTools::getVectorParameter< size_t >("tmrca_interval", params, ',', "(0,40)", "", true, 4);
   
   //are there FASTA sequences to bin?
@@ -536,11 +536,11 @@ int main(int argc, char *argv[]) {
         
     //this assumes each block is a chr or scaffold
     //in the original seq file and has not been further chopped
-    size_t lowerCut = stol(tabFile[i][5]);  
-    size_t upperCut = stol(tabFile[i][6]);
+    size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]);  
+    size_t upperCut = TextTools::to<size_t>(tabFile[i][6]);
     
-    size_t alnStart = stol(tabFile[i][1]) - 1; // -1 to index from 0
-    size_t alnEnd = stol(tabFile[i][2]) - 1; // -1 to index from 0
+    size_t alnStart = TextTools::to<size_t>(tabFile[i][1]) - 1; // -1 to index from 0
+    size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1; // -1 to index from 0
     size_t lowerStart = 0;
     
     if(lowerCut >= alnStart) {
@@ -655,10 +655,10 @@ int main(int argc, char *argv[]) {
             
             if(fastaSeqs) {
                 
-              double missing = static_cast< double >(count(begin(seqs[j][k]) + startPos, begin(seqs[j][k]) + endPos, '2'));          
+              double missing = static_cast< double >(count(begin(seqs[j][k]) + static_cast<Vdouble::difference_type>(startPos), begin(seqs[j][k]) + static_cast<Vdouble::difference_type>(endPos), '2'));          
               binMask[k][l] =  missing / binLen;
                         
-              double snp = static_cast< double >(count(begin(seqs[j][k]) + startPos, begin(seqs[j][k]) + endPos, '1'));                
+              double snp = static_cast< double >(count(begin(seqs[j][k]) + static_cast<Vdouble::difference_type>(startPos), begin(seqs[j][k]) + static_cast<Vdouble::difference_type>(endPos), '1'));                
               binPi[k][l] = snp / (binLen - missing);
             }
             

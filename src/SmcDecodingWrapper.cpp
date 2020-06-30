@@ -546,7 +546,8 @@ void SmcDecodingWrapper::jointlyDecodeFragment_(VVdouble& piMmSmc, size_t fragSt
       sizeOfBatches[i] = batchSize;
     }
     sizeOfBatches[numBatches - 1] = numDiploids - batchSize * (numBatches - 1);
-    
+   
+    size_t cumBatches = 0; 
     for(size_t i = 0; i < numBatches; ++i) {
       
       size_t numTasks = sizeOfBatches[i];
@@ -554,7 +555,7 @@ void SmcDecodingWrapper::jointlyDecodeFragment_(VVdouble& piMmSmc, size_t fragSt
       
       for(size_t j = 0; j < numTasks; ++j) {
 
-        size_t diploidIndex = j + i * numTasks; 
+        size_t diploidIndex = j + cumBatches; 
         threadVector[j] = thread(extractInfoDiploid, diploidIndex);
       }
     
@@ -563,6 +564,7 @@ void SmcDecodingWrapper::jointlyDecodeFragment_(VVdouble& piMmSmc, size_t fragSt
       }
     
       delete [] threadVector; 
+      cumBatches += numTasks;
     }
   }
   
