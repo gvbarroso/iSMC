@@ -380,10 +380,8 @@ void PolymorphismData::setBreakpoints_(const vector< size_t >& chrStarts,
   //determines block breakpoints in the contigous WGS (indvSeqs_ vector)
   for(size_t i = 0; i < numChr; ++i) {
             
-    right = chrEnds[i] - chrStarts[i] + left + 1;
+    right = chrEnds[i] - chrStarts[i] + left;
     seqBreakpoints_.push_back(make_pair(left, right)); //starts at left = 0
-    
-    //cout << "numChr = " << numChr << "; left = " << left << "; right = " << right << endl;
     
     left = right + 1; //NOTE: this implies that all sites in the alignment must be used!
   }

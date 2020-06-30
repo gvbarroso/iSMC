@@ -22,7 +22,7 @@
 
 #include "MmPsmc.h"
 
-//#define EXTRA_DECODING //to decode & output landscapes other than the posterior avg. rate
+#define EXTRA_DECODING //to decode & output landscapes other than the posterior avg. rate
 
 using namespace std;
 using namespace bpp;
@@ -374,18 +374,9 @@ void MmPsmc::posteriorDecodingUsingZipHMM(size_t genomicStart, size_t genomicEnd
   else {
     computeLocalAverageRate(postProbMatrix, fileName);
   }
-
+  
   #ifdef EXTRA_DECODING
   computeLocalAverageTmrca(postProbMatrix, fileName);
-  
-  string shannonTotal = fileName + "_total";
-  computePerSiteShannonEquitability_(postProbMatrix, shannonTotal);
-
-  string shannonRate = fileName + "_" + rate;
-  computePerSiteShannonEquitability_(getRatePosteriorMatrix_(postProbMatrix, rate), shannonRate);
-  
-  sting shannonTree = fileName + "_tree";
-  computePerSiteShannonEquitability_(getTreePosteriorMatrix_(postProbMatrix), shannonTree);
   #endif
 
 } 
