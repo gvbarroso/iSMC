@@ -1,7 +1,8 @@
 #! /bin/sh
 arch=`uname -m`
-version=0.0.13-1
+version=0.0.23-1
 
 strip src/ismc
-tar cvzf ismc-${arch}-bin-static-${version}.tar.gz --directory=src ismc
+strip src/ismc_mapper
+tar cvzf ismc-${arch}-bin-static-${version}.tar.gz src/ismc src/ismc_mapper
 
