@@ -53,10 +53,10 @@ void Psmc::computeBiHaploidLogLikelihood(size_t numAvailThreads) {
       
       if(index < numberOfBreakpoints) {
           
-        size_t fragStart = sortedBreakpoints[index].first + 1; //converts to human coordinates (starting from 1)
+        size_t fragStart = sortedBreakpoints[index].first; 
         size_t fragEnd = sortedBreakpoints[index].second;  
       
-        //cout << "i: " << i << "; j: " << j << "; index: " << index << "; start: " << fragStart << "; end: " << fragEnd << endl;
+        cout << "i: " << i << "; j: " << j << "; index: " << index << "; start: " << fragStart << "; end: " << fragEnd << endl;
        
         batchBps.push_back(make_pair(fragStart, fragEnd)); 
       }
@@ -129,8 +129,7 @@ void Psmc::writeDataStructures() {
     preparator.read_seq(focalSegment, focalAlphabetSize, smc_ -> getNumberOfHiddenStates(), 1e+4); 
     
     //writes data structure using human coordinates (starting from 1) in folder names
-    preparator.write_to_directory("ziphmm_" + biHaploidName_ + "_" + TextTools::toString(fragStart + 1) +
-                                  "-" + TextTools::toString(fragEnd));
+    preparator.write_to_directory("ziphmm_" + biHaploidName_ + "_" + TextTools::toString(fragStart) + "-" + TextTools::toString(fragEnd));
   }  
 }
 
