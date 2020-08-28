@@ -56,7 +56,7 @@ void Psmc::computeBiHaploidLogLikelihood(size_t numAvailThreads) {
         size_t fragStart = sortedBreakpoints[index].first; 
         size_t fragEnd = sortedBreakpoints[index].second;  
       
-        cout << "i: " << i << "; j: " << j << "; index: " << index << "; start: " << fragStart << "; end: " << fragEnd << endl;
+        //cout << "i: " << i << "; j: " << j << "; index: " << index << "; start: " << fragStart << "; end: " << fragEnd << endl;
        
         batchBps.push_back(make_pair(fragStart, fragEnd)); 
       }
