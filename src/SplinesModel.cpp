@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 21/07/2018
- * Last modified: 25/02/2020
+ * Last modified: 05/10/2020
  *
  */
 
@@ -71,8 +71,9 @@ ParameterList SplinesModel::fetchModelParameters() {
     }
   }
   
-  for(size_t i = 0; i < ignoreParams_.size(); ++i)
-    params.deleteParameter(ignoreParams_[i]);
-      
+  for(size_t i = 0; i < ignoreParams_.size(); ++i) {
+    if(params.hasParameter(ignoreParams_[i]))  
+      params.deleteParameter(ignoreParams_[i]);
+  }    
   return params;
 }

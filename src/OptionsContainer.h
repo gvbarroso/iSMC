@@ -42,7 +42,7 @@ private:
   
   //characters in mask file that represent position passing filtering criteria
   std::vector< std::string > callableCode_; //default = 1, P
-  std::vector< std::string > ignoredParams_; //default = 1, P
+  std::vector< std::string > ignoredParams_;
   
   unsigned int numberOfThetaCategories_;
   unsigned int numberOfRhoCategories_;

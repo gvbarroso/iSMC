@@ -132,7 +132,6 @@ void SmcOptimizationWrapper::optimizeParameters(const ParameterList& backupParam
   }
   params.matchParametersValues(backupParams);
   
-  std::cout << "Testing:\n";
   params.printParameters(cout);
   
   
