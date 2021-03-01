@@ -74,6 +74,13 @@ void Psmc::computeBiHaploidLogLikelihood(size_t numAvailThreads) {
 
 vector< unsigned char > Psmc::fetchFragment(size_t genomicStart, size_t genomicEnd) {
     
+  if (genomicStart >= biHaploidSnpCalling_.size())
+    throw Exception("Psmc::fetchFragment. Starting position outside data range.");
+  if (genomicEnd > biHaploidSnpCalling_.size())
+    throw Exception("Psmc::fetchFragment. Ending position outside data range.");
+  if (genomicStart > genomicEnd)
+    throw Exception("Psmc::fetchFragment. Ending position before starting positions.");
+
   vector< unsigned char >::const_iterator start = biHaploidSnpCalling_.begin() + static_cast< vector< unsigned char >::difference_type >(genomicStart);
   vector< unsigned char >::const_iterator end = biHaploidSnpCalling_.begin() + static_cast< vector< unsigned char >::difference_type >(genomicEnd); 
   
@@ -109,7 +116,7 @@ void Psmc::writeDataStructures() {
     size_t fragEnd = get< 1 >(focalPair); 
         
     vector< unsigned char > focalSegment = fetchFragment(fragStart, fragEnd);
-    
+
     size_t focalAlphabetSize = smcep_ -> fetchNumberOfObservedStates(focalSegment);
     
     //cout << "fragStart = " << fragStart << "; fragEnd = " << fragEnd << "; seglength = " << focalSegment.size() << endl;
@@ -117,10 +124,15 @@ void Psmc::writeDataStructures() {
     if(focalAlphabetSize != smcep_ -> getExpectedMatrix().front().size()) {
         
       cout << "WARNING!!! Number of observed states in fragment " << i + 1;
-      cout << " does not match number of observed states in entire sequence!" << endl;
-      cout << "This usually happens if fragment is small and lacks either homozygous,";
+      cout << " does not match the number of observed states in the entire sequence!" << endl;
+      cout << "This usually happens if the fragment is small and lacks either homozygous,";
       cout << "heterozygous or missing sites." << endl;
       cout << "Fragment size: " << focalSegment.size() << endl;
+      map<unsigned char, size_t> counts = VectorTools::countValues(focalSegment);
+      for(auto& x : counts)
+      {
+        cout << static_cast<int>(x.first) << "\t" << x.second << endl;
+      }
       throw Exception("iSMC::Could not create data structure with zipHMM!");
       
     }
