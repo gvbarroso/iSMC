@@ -75,9 +75,9 @@ void Psmc::computeBiHaploidLogLikelihood(size_t numAvailThreads) {
 vector< unsigned char > Psmc::fetchFragment(size_t genomicStart, size_t genomicEnd) {
     
   if (genomicStart >= biHaploidSnpCalling_.size())
-    throw Exception("Psmc::fetchFragment. Starting position outside data range.");
+    throw IndexOutOfBoundsException ("Psmc::fetchFragment. Starting position outside data range.", genomicStart, 0, biHaploidSnpCalling_.size());
   if (genomicEnd > biHaploidSnpCalling_.size())
-    throw Exception("Psmc::fetchFragment. Ending position outside data range.");
+    throw IndexOutOfBoundsException ("Psmc::fetchFragment. Starting position outside data range.", genomicEnd, 0, biHaploidSnpCalling_.size());
   if (genomicStart > genomicEnd)
     throw Exception("Psmc::fetchFragment. Ending position before starting positions.");
 
@@ -124,7 +124,7 @@ void Psmc::writeDataStructures() {
     if(focalAlphabetSize != smcep_ -> getExpectedMatrix().front().size()) {
         
       cout << "WARNING!!! Number of observed states in fragment " << i + 1;
-      cout << " does not match the number of observed states in the entire sequence!" << endl;
+      cout << "does not match the number of observed states in the entire sequence!" << endl;
       cout << "This usually happens if the fragment is small and lacks either homozygous,";
       cout << "heterozygous or missing sites." << endl;
       cout << "Fragment size: " << focalSegment.size() << endl;
