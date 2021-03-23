@@ -112,15 +112,17 @@ void Psmc::writeDataStructures() {
     
     size_t focalAlphabetSize = smcep_ -> fetchNumberOfObservedStates(focalSegment);
     
-    //cout << "fragStart = " << fragStart << "; fragEnd = " << fragEnd << "; seglength = " << focalSegment.size() << endl;
+    cout << "fragStart = " << fragStart << "; fragEnd = " << fragEnd << "; seglength = " << focalSegment.size() << endl;
     
     if(focalAlphabetSize != smcep_ -> getExpectedMatrix().front().size()) {
         
-      cout << "WARNING!!! Number of observed states in fragment " << i + 1;
+      cout << "Number of observed states in fragment " << i + 1;
       cout << " does not match number of observed states in entire sequence!" << endl;
       cout << "This usually happens if fragment is small and lacks either homozygous,";
       cout << "heterozygous or missing sites." << endl;
-      cout << "Fragment size: " << focalSegment.size() << endl;
+      cout << "fragment size: " << focalSegment.size() << endl;
+      cout << "alphabet size: " << focalAlphabetSize << endl;
+      cout << "matrix size: " << smcep_ -> getExpectedMatrix().front().size() << endl;
       throw Exception("iSMC::Could not create data structure with zipHMM!");
       
     }

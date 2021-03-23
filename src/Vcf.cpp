@@ -189,6 +189,7 @@ void Vcf::maskSequences(filtering_istream& mask, vector< vector< string > >& chr
         for(size_t j = startBedInterval; j < endBedInterval; ++j) {
           //masks sites present in BED file
           size_t seqPos = j - startChrVcf + chrStart;
+          //cout << "chrStart = " << chrStart << "; startChrVcf = " << startChrVcf << "; seqPos = " << seqPos << endl;
           maskSite_(seqPos); 
         }
       }
