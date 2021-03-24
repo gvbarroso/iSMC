@@ -87,6 +87,7 @@ int main(int argc, char *argv[]) {
     return(0);
   }  
 
+  try {
 
   ///////////////////////////////////////////////////////////////////////////////////////////
   //Reads params file
@@ -507,6 +508,12 @@ int main(int argc, char *argv[]) {
   ///////////////////////////////////////////////////////////////////////////////////////////
   
   iSMC.done();  
+  
+  } catch(exception& e) {
+    cout << "iSMC terminated because of an error." << endl;
+    cout << e.what() << endl;
+    return 1;
+  }
 
   return 0;
 }
