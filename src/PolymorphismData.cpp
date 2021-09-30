@@ -196,7 +196,10 @@ void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
         unsigned int first_hap = containerIndices[i];
         unsigned int second_hap = containerIndices[i + 1];
         
-        if(line[first_hap] == line[second_hap]) {
+	if (first_hap == second_hap)
+	  throw Exception("iSMC::Comparing one haplotype with itself.");
+        
+	if(line[first_hap] == line[second_hap]) {
           indvSeqs_[diploidIndex].push_back(0u);
         }
         
@@ -238,8 +241,14 @@ void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) {
       
     VectorSiteContainer diploidSequence(&AlphabetTools::DNA_ALPHABET);
     
-    diploidSequence.addSequence(alignedSequences -> getSequence(containerIndices[i]), false);
-    diploidSequence.addSequence(alignedSequences -> getSequence(containerIndices[i + 1]), false);
+    unsigned int first_hap = containerIndices[i];
+    unsigned int second_hap = containerIndices[i + 1];
+        
+    if (first_hap == second_hap)
+      throw Exception("iSMC::Comparing one haplotype with itself.");
+    
+    diploidSequence.addSequence(alignedSequences -> getSequence(first_hap), false);
+    diploidSequence.addSequence(alignedSequences -> getSequence(second_hap), false);
       
     vector< unsigned char > diploidSnps(diploidSequence.getNumberOfSites());
     
