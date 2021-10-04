@@ -52,7 +52,7 @@ void Psmc::computeBiHaploidLogLikelihood(size_t numAvailThreads) {
       size_t index = j + i * batchSize;
       
       if(index < numberOfBreakpoints) {
-          
+        
         size_t fragStart = sortedBreakpoints[index].first; 
         size_t fragEnd = sortedBreakpoints[index].second;  
       
@@ -104,7 +104,7 @@ void Psmc::writeDataStructures() {
     
   //creates a data structure for each breakpoint where the Markov Chain is reset in this diploid
   for(size_t i = 0; i < seqBreakpoints_.size(); ++i) {
-      
+    
     zipHMM::Forwarder preparator; 
     
     cout << "   creating data structure for fragment #" << i + 1 << " of " << seqBreakpoints_.size() << "." << endl;
@@ -114,7 +114,7 @@ void Psmc::writeDataStructures() {
     //these are in computer coordinates (indexed by 0)
     size_t fragStart = get< 0 >(focalPair); 
     size_t fragEnd = get< 1 >(focalPair); 
-        
+    
     vector< unsigned char > focalSegment = fetchFragment(fragStart, fragEnd);
 
     size_t focalAlphabetSize = smcep_ -> fetchNumberOfObservedStates(focalSegment);
@@ -336,11 +336,11 @@ void Psmc::computePosteriorProbabilities() {
 double Psmc::computeBatchLogLikelihood_(const Breakpoints& bpBatch) {
   
   size_t numberOfTasks = bpBatch.size(); 
-      
+    
   double compLikBatch = 0.; //sum of the logLikelihoods of each fragment in batch
 
   auto computeLikelihood = [&] (size_t breakpoint_id) {
-      
+    
     zipHMM::Forwarder calculator;   
     
     size_t fragStart = bpBatch[breakpoint_id].first; 

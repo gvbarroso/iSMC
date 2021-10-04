@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   cout << "*            Endless ancestors                                   *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
-  cout << "* Authors: G. Barroso                    Last Modif. 29/Jun/2020 *" << endl;
+  cout << "* Authors: G. Barroso                    Last Modif. 04/Oct/2021 *" << endl;
   cout << "*          J. Dutheil                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;

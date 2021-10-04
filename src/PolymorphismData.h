@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 12/04/2018
- * Last modified: 20/03/2019
+ * Last modified: 04/10/2021
  *
  */
 
@@ -53,6 +53,9 @@ public:
   opt_(smcOptions)
   { 
     processInputSequences();
+    // makes sure that all independent blocks have at least 1 masked site
+    // thus all share the observed states and ziphmm will work
+    maskFirstSites_();
   }
   
 public: 
@@ -92,6 +95,19 @@ private:
                        const std::vector< size_t >& right);
 
   std::vector< std::vector< std::string > > readTabFile_(const std::string& file);
+  
+  // masks first position of each chr
+  void maskFirstSites_() {
+      
+    for(size_t i = 0; i < indvSeqs_.size(); ++i)
+    {
+      for(size_t j = 0; j < seqBreakpoints_.size(); ++j)
+      {
+        size_t start = seqBreakpoints_[j].first;
+        indvSeqs_[i][start] = 2u;
+      }
+    }
+  }
     
 };
 

@@ -166,7 +166,7 @@ void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
   vector< size_t > endCoords(chrTable.size());
 
   for(size_t i = 0; i < chrTable.size(); ++i) {
-      
+    
     startCoords[i] = TextTools::to<size_t>(chrTable[i][1]);
     endCoords[i] = TextTools::to<size_t>(chrTable[i][2]);
   }  
@@ -391,7 +391,7 @@ void PolymorphismData::setBreakpoints_(const vector< size_t >& chrStarts,
   
   //determines block breakpoints in the contigous WGS (indvSeqs_ vector)
   for(size_t i = 0; i < numChr; ++i) {
-            
+    
     right = chrEnds[i] - chrStarts[i] + left;
     seqBreakpoints_.push_back(make_pair(left, right)); //starts at left = 0
     
