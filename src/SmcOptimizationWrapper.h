@@ -22,7 +22,7 @@
 #include <Bpp/Numeric/ParameterList.h>
 #include <Bpp/App/BppApplication.h>
 #include <Bpp/App/ApplicationTools.h>
-#include <Bpp/Phyl/Likelihood/PseudoNewtonOptimizer.h>
+#include <Bpp/Phyl/PseudoNewtonOptimizer.h>
 
 #include "RelativeStopCondition.h"
 #include "BaumWelch.h"

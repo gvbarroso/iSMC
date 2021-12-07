@@ -53,9 +53,8 @@ IF(CMAKE_INSTALL_PREFIX)
 ENDIF(CMAKE_INSTALL_PREFIX)
 
 INCLUDE(GNUInstallDirs)
-FIND_PACKAGE(bpp-phyl 12.0.0 REQUIRED)
+FIND_PACKAGE(bpp-phyl3 1.0.0 REQUIRED)
 
-# BLAS:
 SET(THREADS_PREFER_PTHREAD_FLAG ON)
 FIND_PACKAGE(Threads REQUIRED)
 
@@ -89,7 +88,7 @@ MACRO(IMPROVED_FIND_LIBRARY OUTPUT_LIBS lib_name include_to_find)
     SET(${lib_name}_STATIC_NAMES lib${lib_name}.a)
     FIND_LIBRARY(${lib_name}_STATIC_LIBRARY NAMES ${${lib_name}_STATIC_NAMES} PATH_SUFFIXES lib${LIB_SUFFIX})
     IF(${lib_name}_STATIC_LIBRARY)
-      MESSAGE("-- Library ${lib_name} found here:")
+	    MESSAGE(STATUS "Library ${lib_name} found here:")
       MESSAGE("   includes: ${${lib_name}_INCLUDE_DIR}")
       MESSAGE("   static libraries: ${${lib_name}_STATIC_LIBRARY}")
     ELSE()
@@ -101,7 +100,7 @@ MACRO(IMPROVED_FIND_LIBRARY OUTPUT_LIBS lib_name include_to_find)
     SET(${lib_name}_NAMES ${lib_name} ${lib_name}.lib ${lib_name}.dll)
     FIND_LIBRARY(${lib_name}_LIBRARY NAMES ${${lib_name}_NAMES} PATH_SUFFIXES lib${LIB_SUFFIX})
     IF(${lib_name}_LIBRARY)
-      MESSAGE("-- Library ${lib_name} found here:")
+	    MESSAGE(STATUS "Library ${lib_name} found here:")
       MESSAGE("   includes: ${${lib_name}_INCLUDE_DIR}")
       MESSAGE("   dynamic libraries: ${${lib_name}_LIBRARY}")
     ELSE()
@@ -119,37 +118,39 @@ IF(CMAKE_INSTALL_PREFIX)
   SET(CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}" ${CMAKE_PREFIX_PATH})
 ENDIF(CMAKE_INSTALL_PREFIX)
 
+# BLAS and other dependencies:
 
-# Find the zlib installation
-IMPROVED_FIND_LIBRARY(LIBS z zlib.h)
-#This does not work with static linkage!!!
-#FIND_PACKAGE(ZLIB REQUIRED)
-#IF(ZLIB_FOUND)
-#  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
-#  SET(LIBS ${LIBS} ${ZLIB_LIBRARIES})
-#  MESSAGE("-- Zlib found here:")
-#  MESSAGE("   includes: ${ZLIB_INCLUDE_DIR}")
-#  MESSAGE("   libraries: ${ZLIB_LIBRARIES}")
-#ENDIF()
+IF(BUILD_STATIC)
+  # Find the zlib installation
+  IMPROVED_FIND_LIBRARY(LIBS z zlib.h)
+  # Find the bz2 installation
+  IMPROVED_FIND_LIBRARY(LIBS bz2 bzlib.h)
+  # Find blas installation
+  IMPROVED_FIND_LIBRARY(LIBS blas cblas.h)
+ELSE(BUILD_STATIC)
+  FIND_PACKAGE(ZLIB REQUIRED)
+  IF(ZLIB_FOUND)
+    INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
+    SET(LIBS ${LIBS} ${ZLIB_LIBRARIES})
+    MESSAGE(STATUS "Zlib found here:")
+    MESSAGE("   includes: ${ZLIB_INCLUDE_DIR}")
+    MESSAGE("   libraries: ${ZLIB_LIBRARIES}")
+  ENDIF()
 
-# Find the bz2 installation
-IMPROVED_FIND_LIBRARY(LIBS bz2 bzlib.h)
-#This does not work with static linkage!!!
-#FIND_PACKAGE(BZip2 REQUIRED)
-#IF(BZIP2_FOUND)
-#  INCLUDE_DIRECTORIES(${BZIP2_INCLUDE_DIR})
-#  SET(LIBS ${LIBS} ${BZIP2_LIBRARIES})
-#  MESSAGE("-- BZip2 found here:")
-#  MESSAGE("   includes: ${BZIP2_INCLUDE_DIR}")
-#  MESSAGE("   libraries: ${BZIP2_LIBRARIES}")
-#ENDIF()
+  FIND_PACKAGE(BZip2 REQUIRED)
+  IF(BZIP2_FOUND)
+    INCLUDE_DIRECTORIES(${BZIP2_INCLUDE_DIR})
+    SET(LIBS ${LIBS} ${BZIP2_LIBRARIES})
+    MESSAGE(STATUS "BZip2 found here:")
+    MESSAGE("   includes: ${BZIP2_INCLUDE_DIR}")
+    MESSAGE("   libraries: ${BZIP2_LIBRARIES}")
+  ENDIF()
 
-#Does not work with static libraries:
-#SET(BLA_STATIC ${BUILD_STATIC})
-#SET(BLA_VENDOR "ATLAS")
-#FIND_PACKAGE(BLAS REQUIRED)
-
-IMPROVED_FIND_LIBRARY(LIBS blas cblas.h)
+  #Does not work with static libraries:
+  #SET(BLA_STATIC ${BUILD_STATIC})
+  #SET(BLA_VENDOR "ATLAS")
+  FIND_PACKAGE(BLAS REQUIRED)
+ENDIF(BUILD_STATIC)
 
 # Subdirectories
 ADD_SUBDIRECTORY(src)
