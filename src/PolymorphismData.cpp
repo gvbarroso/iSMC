@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 12/04/2018
- * Last modified: 05/08/2019
+ * Last modified: 16/12/2021
  *
  */
 
@@ -359,15 +359,18 @@ vector< vector< string > > PolymorphismData::readTabFile_(const string& file) {
     vector< string > splitLine(0);
             
     while(getline(tabFile, line)) { //each line is a different block (chromosome, scaffold)
-                
-      boost::split(splitLine, line, [](char c){ return c == '\t'; });
       
-      vector< string > chrInfo(3);
-      //removing white spaces as a small safety move
-      chrInfo[0] = TextTools::removeWhiteSpaces(splitLine[0]); //chr label
-      chrInfo[1] = TextTools::removeWhiteSpaces(splitLine[1]); //start coord
-      chrInfo[2] = TextTools::removeWhiteSpaces(splitLine[2]); //end coord
-      table.push_back(chrInfo);    
+      if(!bpp::TextTools::isEmpty(line)) {
+          
+        boost::split(splitLine, line, [](char c){ return c == '\t'; });
+      
+        vector< string > chrInfo(3);
+        //removing white spaces as a small safety move
+        chrInfo[0] = TextTools::removeWhiteSpaces(splitLine[0]); //chr label
+        chrInfo[1] = TextTools::removeWhiteSpaces(splitLine[1]); //start coord
+        chrInfo[2] = TextTools::removeWhiteSpaces(splitLine[2]); //end coord
+        table.push_back(chrInfo);    
+      }
     }
     
     tabFile.close();
