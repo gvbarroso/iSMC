@@ -1,5 +1,5 @@
 Dependencies:
-- A C++ compiler, both gcc and clang should work. Recent versions are required, with support for c++11.
+- A C++ compiler, both gcc and clang should work. Recent versions are required, with support for c++14.
 - CMake >= 2.6 for building
 - Bio++ libraries: bpp-core, bpp-seq, bpp-phyl (version >=2.4 required). Can be installed from GitHub (https://github.com/BioPP) or from precompiled packages.
 - The boost-iostreams library

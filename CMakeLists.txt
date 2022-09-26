@@ -7,7 +7,7 @@ cmake_minimum_required (VERSION 3.1.0)
 project (ismc CXX)
 
 # Compile options
-SET (CMAKE_CXX_FLAGS "-std=c++11 -Wall -Weffc++ -Wshadow -Wconversion -O3 -no-pie")
+SET (CMAKE_CXX_FLAGS "-std=c++14 -Wall -Weffc++ -Wshadow -Wconversion -O3 -no-pie")
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
