@@ -105,7 +105,7 @@ public:
   numberOfThetaCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_theta_categories", parameterOptions, 1, "", true, 4)),
   numberOfRhoCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_rho_categories", parameterOptions, 1, "", true, 4)),
   numberOfNeCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_ne_categories", parameterOptions, 1, "", true, 4)),
-  numberOfIntervals_(bpp::ApplicationTools::getParameter<unsigned int>("number_intervals", parameterOptions, 40, "", true, 4)),
+  numberOfIntervals_(bpp::ApplicationTools::getParameter<unsigned int>("number_intervals", parameterOptions, 40, "", true, 4) + 1), // +1 because timeInterval[0] = 0, present time
   numberOfDecodingIntervals_(bpp::ApplicationTools::getParameter<unsigned int>("number_intervals_decoding", parameterOptions, numberOfIntervals_, "", true, 4)),
   initNumberOfKnots_(bpp::ApplicationTools::getParameter<unsigned int>("init_number_knots", parameterOptions, 3, "", true, 4)),
   maxNumberOfKnots_(bpp::ApplicationTools::getParameter<unsigned int>("max_number_knots", parameterOptions, 3, "", true, 4)),
