@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 13/04/2018
- * Last modified: 05/08/2019
+ * Last modified: 11/12/2022
  *
  */
 
@@ -119,7 +119,7 @@ void Psmc::writeDataStructures() {
 
     size_t focalAlphabetSize = smcep_ -> fetchNumberOfObservedStates(focalSegment);
     
-    cout << "fragStart = " << fragStart << "; fragEnd = " << fragEnd << "; seglength = " << focalSegment.size() << endl;
+    //cout << "fragStart = " << fragStart << "; fragEnd = " << fragEnd << "; seglength = " << focalSegment.size() << endl;
     
     if(focalAlphabetSize != smcep_ -> getExpectedMatrix().front().size()) {
       cout << "WARNING!!! Number of observed states in fragment " << i + 1;
@@ -144,6 +144,49 @@ void Psmc::writeDataStructures() {
     //writes data structure using human coordinates (starting from 1) in folder names
     preparator.write_to_directory("ziphmm_" + biHaploidName_ + "_" + TextTools::toString(fragStart) + "-" + TextTools::toString(fragEnd));
   }  
+}
+
+void Psmc::prepareDataStructures() {
+
+  //creates a data structure for each breakpoint where the Markov Chain is reset in this diploid
+  for(size_t i = 0; i < seqBreakpoints_.size(); ++i) {
+
+    zipHMM::Forwarder preparator;
+
+    cout << "   creating data structure for fragment #" << i + 1 << " of " << seqBreakpoints_.size() << "." << endl;
+
+    auto focalPair = seqBreakpoints_[i];
+
+    //these are in computer coordinates (indexed by 0)
+    size_t fragStart = get< 0 >(focalPair);
+    size_t fragEnd = get< 1 >(focalPair);
+
+    vector< unsigned char > focalSegment = fetchFragment(fragStart, fragEnd);
+
+    size_t focalAlphabetSize = smcep_ -> fetchNumberOfObservedStates(focalSegment);
+
+    if(focalAlphabetSize != smcep_ -> getExpectedMatrix().front().size()) {
+      cout << "WARNING!!! Number of observed states in fragment " << i + 1;
+      cout << "does not match the number of observed states in the entire sequence!" << endl;
+      cout << "This usually happens if the fragment is small and lacks either homozygous,";
+      cout << "heterozygous or missing sites." << endl;
+      cout << "fragment size: " << focalSegment.size() << endl;
+      cout << "alphabet size: " << focalAlphabetSize << endl;
+      cout << "matrix size: " << smcep_ -> getExpectedMatrix().front().size() << endl;
+      map<unsigned char, size_t> counts = VectorTools::countValues(focalSegment);
+      for(auto& x : counts)
+      {
+        cout << static_cast<int>(x.first) << "\t" << x.second << endl;
+      }
+      throw Exception("iSMC::Could not create data structure with zipHMM!");
+
+    }
+
+    //polymorphic version from SimpleZipHMM
+    preparator.read_seq(focalSegment, focalAlphabetSize, smc_ -> getNumberOfHiddenStates(), 1e+4);
+
+    forwarders_.push_back(preparator);
+  }
 }
 
 double Psmc::forwardAlgorithm() {
@@ -336,23 +379,13 @@ void Psmc::computePosteriorProbabilities() {
 double Psmc::computeBatchLogLikelihood_(const Breakpoints& bpBatch) {
   
   size_t numberOfTasks = bpBatch.size(); 
-    
   double compLikBatch = 0.; //sum of the logLikelihoods of each fragment in batch
 
   auto computeLikelihood = [&] (size_t breakpoint_id) {
-    
-    zipHMM::Forwarder calculator;   
-    
-    size_t fragStart = bpBatch[breakpoint_id].first; 
-    size_t fragEnd = bpBatch[breakpoint_id].second;  
-    
-    //cout << "fragStart: " << fragStart << "; fragEnd: " << fragEnd << endl;
-        
-    calculator.read_from_directory("ziphmm_" + biHaploidName_ + "_" + TextTools::toString(fragStart) + "-" + TextTools::toString(fragEnd)); 
-    
-    compLikBatch += calculator.forward(hiddenStatesInitializationProbabilities_,
-                                       smctp_ -> getExpectedMatrix(),
-                                       smcep_ -> getExpectedMatrix());
+
+    compLikBatch += forwarders_[breakpoint_id].forward(hiddenStatesInitializationProbabilities_,
+                                                       smctp_ -> getExpectedMatrix(),
+                                                       smcep_ -> getExpectedMatrix());
   };
 
   thread* threadVector = new thread[numberOfTasks];

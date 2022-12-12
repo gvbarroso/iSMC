@@ -212,7 +212,7 @@ void SequentiallyMarkovCoalescent::discretizeTimeUsingExpBoundaries_() {
   
   for(size_t i = 0; i < timeIntervals_.size(); ++i) {
     timeIntervals_[i] = -log(1. - static_cast< double >(i) / static_cast< double >(timeIntervals_.size()));
-    cout << "timeIntervals_[" << i << "] = " << timeIntervals_[i] << endl;
+    //cout << "timeIntervals_[" << i << "] = " << timeIntervals_[i] << endl;
   }
 }
   

@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 13/04/2018
- * Last modified: 14/03/2019
+ * Last modified: 11/12/2022
  *
  */
 
@@ -50,9 +50,12 @@ protected:
   Breakpoints seqBreakpoints_; 
   
   double biHaploidLogLikelihood_;
+
   std::shared_ptr< SequentiallyMarkovCoalescent > smc_;
   std::shared_ptr< SmcTransitionProbabilities > smctp_;
   std::shared_ptr< SmcEmissionProbabilities > smcep_;
+
+  std::vector<zipHMM::Forwarder> forwarders_;
   
 public:
   Psmc(const std::string& biHaploidIndividualName,
@@ -71,14 +74,16 @@ public:
   biHaploidLogLikelihood_(0.),
   smc_(smc),
   smctp_(smctp),
-  smcep_(smcep)
+  smcep_(smcep),
+  forwarders_(0)
   {
     setUpInitializationProbabilities_(); 
     std::cout << "Pre-processing pair of genomes " << biHaploidName_ << "..." << std::endl;
     if(missingBlockLength > 0) {
       seqBreakpoints_ = selectInformativeRegions_(missingBlockLength);
     }
-    writeDataStructures();
+
+    prepareDataStructures();
     std::cout << "done." << std::endl;
   }
   
@@ -98,7 +103,8 @@ public:
   biHaploidLogLikelihood_(0.),
   smc_(smc),
   smctp_(smctp),
-  smcep_(smcep)
+  smcep_(smcep),
+  forwarders_(0)
   {
     setUpInitializationProbabilities_();
   }
@@ -184,6 +190,8 @@ public:
   
   //writes data structures to file, based on seqBreakpoints_ 
   void writeDataStructures();
+
+  void prepareDataStructures();
   
   double forwardAlgorithm();
     
