@@ -143,7 +143,7 @@ private:
   
   void discretizeTimeUsingTmax_(double tMax);
 
-  double fetchBiHaploidWattersonsTheta_(const std::vector< unsigned char >& sequence);
+  double fetchBiHaploidTheta_(const std::vector< unsigned char >& sequence);
   
   void computeMeanThetaAcrossDataSet_(const std::vector< std::vector < unsigned char > >& sequences);
   

@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 12/04/2018
- * Last modified: 16/12/2021
+ * Last modified: 15/12/2022
  *
  */
 
@@ -26,7 +26,7 @@ using namespace boost::iostreams;
 void PolymorphismData::processInputSequences() { 
     
   //input sequence file
-  boost::iostreams::filtering_istream seqStream; 
+  filtering_istream seqStream;
   
   if(opt_ -> getSeqCompressionType() == "gzip") {
     seqStream.push(gzip_decompressor());
@@ -55,7 +55,7 @@ void PolymorphismData::processInputSequences() {
   }
   
   //mask file (required only for VCF input)
-  boost::iostreams::filtering_istream maskStream;
+  filtering_istream maskStream;
   
   if(opt_ -> getMaskFileName() != "none") { //if mask file name is provided
     if(opt_ -> getMaskCompressionType() == "gzip") {
@@ -123,7 +123,7 @@ void PolymorphismData::printSequencesToFile() {
     seqFile.open(opt_ -> getLabel() + ".block." + TextTools::toString(i + 1) + ".fasta.gz",
                  std::ios_base::out | std::ios_base::binary);
     
-    boost::iostreams::filtering_ostream seqStream; 
+    filtering_ostream seqStream;
   
     seqStream.push(boost::iostreams::gzip_compressor());
     seqStream.push(seqFile);
@@ -176,39 +176,36 @@ void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
   vector< unsigned int > containerIndices(opt_ -> getDiploidIndices());    
   indvSeqs_.resize(containerIndices.size() / 2);
   
-  for(size_t i = 0; i < indvSeqs_.size(); ++i) {
+  for(size_t i = 0; i < indvSeqs_.size(); ++i)
     indvNames_.push_back("diploid_" + TextTools::toString(i + 1));
-  }
   
   string line;
+  getline(seqInput, line); // skips header
   
   while(getline(seqInput, line)) {
     
     line = TextTools::removeWhiteSpaces(line);
-    
-    //first line is a header with haploid ids named hap_1 : hap_n
-    if(line.at(0) == '0' || line.at(0) == '1') { 
         
-      unsigned int diploidIndex = 0;
+    unsigned int diploidIndex = 0;
       
-      for(size_t i = 0; i <= containerIndices.size() - 2; i += 2) {
+    for(size_t i = 0; i <= containerIndices.size() - 2; i += 2) {
           
-        unsigned int first_hap = containerIndices[i];
-        unsigned int second_hap = containerIndices[i + 1];
+      unsigned int first_hap = containerIndices[i];
+      unsigned int second_hap = containerIndices[i + 1];
         
-	if (first_hap == second_hap)
-	  throw Exception("iSMC::Comparing one haplotype with itself.");
+      if(first_hap == second_hap)
+        throw Exception("iSMC::Comparing a haplotype with itself.");
         
-	if(line[first_hap] == line[second_hap]) {
-          indvSeqs_[diploidIndex].push_back(0u);
-        }
+      if((line[first_hap] == '2') || (line[second_hap] == '2'))
+        indvSeqs_[diploidIndex].push_back(2u); // missing data
+
+      else if(line[first_hap] == line[second_hap])
+        indvSeqs_[diploidIndex].push_back(0u);
         
-        else {
-          indvSeqs_[diploidIndex].push_back(1u);
-        }
+      else
+        indvSeqs_[diploidIndex].push_back(1u);
         
         ++diploidIndex;
-      }
     }
   }
 }
@@ -244,7 +241,7 @@ void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) {
     unsigned int first_hap = containerIndices[i];
     unsigned int second_hap = containerIndices[i + 1];
         
-    if (first_hap == second_hap)
+    if(first_hap == second_hap)
       throw Exception("iSMC::Comparing one haplotype with itself.");
     
     diploidSequence.addSequence(alignedSequences -> getSequence(first_hap), false);

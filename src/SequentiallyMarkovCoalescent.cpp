@@ -225,25 +225,25 @@ void SequentiallyMarkovCoalescent::discretizeTimeUsingTmax_(double tMax) {
   }
 }
 
-double SequentiallyMarkovCoalescent::fetchBiHaploidWattersonsTheta_(const vector< unsigned char >& sequence) {
+double SequentiallyMarkovCoalescent::fetchBiHaploidTheta_(const vector< unsigned char >& sequence) {
     
-  size_t polymorphic = 0;
+  double polymorphic = 0.;
   size_t callable = 0;
   
   for(size_t i = 0; i < sequence.size(); ++i) {
       
-    if(sequence[i] != 2) { //skips missing information
+    if(sequence[i] != 2u) { //skips missing information
         
       ++callable;
       
-      if(sequence[i] == 1) { 
+      if(sequence[i] == 1u) {
         ++polymorphic;
       }
     }
   }
   
-  //cout << "polymorphic = " << polymorphic << "; callable = " << callable << endl;
-  return static_cast< double >(polymorphic) / static_cast< double >(callable);
+  cout << "polymorphic = " << polymorphic << "; callable = " << callable << endl;
+  return polymorphic / callable;
 }
   
 void SequentiallyMarkovCoalescent::computeMeanThetaAcrossDataSet_(const vector< vector < unsigned char > >& sequences) {
@@ -251,7 +251,7 @@ void SequentiallyMarkovCoalescent::computeMeanThetaAcrossDataSet_(const vector< 
   double sumOfThetas = 0.;
   
   for(size_t i = 0; i < sequences.size(); ++i) {
-    sumOfThetas += fetchBiHaploidWattersonsTheta_(sequences[i]);
+    sumOfThetas += fetchBiHaploidTheta_(sequences[i]);
   }
   
   double averageThetaAcrossDataSet = sumOfThetas / static_cast< double >(sequences.size());

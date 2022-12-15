@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 13/04/2018
- * Last modified: 28/09/2022
+ * Last modified: 15/12/2022
  *
  */
 
@@ -159,13 +159,13 @@ void SmcOptimizationWrapper::optimizeParameters(const ParameterList& backupParam
   fireUpdateBestValues_(bestSplines.get(), params);
 }
 
-void SmcOptimizationWrapper::writeEstimatesToFile(const ParameterList& params, double AIC) {
+void SmcOptimizationWrapper::writeEstimatesToFile(const ParameterList& params, double ll) {
     
   //writes params in a simple txt format that is easy to parse
   ofstream parameterEstimates;
   
   parameterEstimates.open(smcOptions_ -> getLabel() + "_estimates.txt");
-  parameterEstimates << setprecision(20) << "AIC = " << AIC << endl << endl;
+  parameterEstimates << setprecision(20) << "LogLikelihood = " << ll << endl << endl;
   
   vector< string > parameterNames = params.getParameterNames();
   
@@ -222,7 +222,7 @@ void SmcOptimizationWrapper::fireUpdateBestValues_(SplinesModel* bestSm, const P
     ParameterList estimParams = bestSm -> getParameters();
     estimParams.addParameter(mmsmc_ -> getParameter("theta"));
     
-    writeEstimatesToFile(estimParams, bestSm -> getAic());
+    writeEstimatesToFile(estimParams, bestSm -> getLogLikelihood());
   }
   
   else {
@@ -351,7 +351,7 @@ void SmcOptimizationWrapper::fitModel_(SplinesModel* smf) {
   
   smf -> computeAic();
 
-  cout << endl << endl << "AIC = " << setprecision(6) << smf -> getAic() << endl;
+  cout << endl << endl << "logLikelihood = " << setprecision(6) << smf -> getLogLikelihood() << endl;
 
   ParameterList optimisedParams(smf -> getParameters());
   cout << endl << "Optimized iSMC parameters:" << endl;
