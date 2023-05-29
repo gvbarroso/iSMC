@@ -15,7 +15,8 @@
 
 class SplinesModel:
   public Splines,
-  public bpp::Function {   
+  public bpp::FunctionInterface
+{   
 protected:
   //bpp::ParameterList params_; //
   std::shared_ptr< MmSmcEmissionProbabilities > mmsmcep_;

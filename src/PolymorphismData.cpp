@@ -230,13 +230,13 @@ void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) {
     
   //parses Fasta
   Fasta reader;
-  unique_ptr< SiteContainer > alignedSequences(reader.readAlignment(seqInput, &AlphabetTools::DNA_ALPHABET));
+  auto alignedSequences = reader.readAlignment(seqInput, AlphabetTools::DNA_ALPHABET);
   
   vector< unsigned int > containerIndices(opt_ -> getDiploidIndices());
   
   for(size_t i = 0; i <= containerIndices.size() - 2; i += 2) {
       
-    VectorSiteContainer diploidSequence(&AlphabetTools::DNA_ALPHABET);
+    VectorSiteContainer diploidSequence(AlphabetTools::DNA_ALPHABET);
     
     unsigned int first_hap = containerIndices[i];
     unsigned int second_hap = containerIndices[i + 1];
@@ -244,21 +244,23 @@ void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) {
     if(first_hap == second_hap)
       throw Exception("iSMC::Comparing one haplotype with itself.");
     
-    diploidSequence.addSequence(alignedSequences -> getSequence(first_hap), false);
-    diploidSequence.addSequence(alignedSequences -> getSequence(second_hap), false);
+    auto seq1 = unique_ptr<Sequence>(alignedSequences -> sequence(first_hap).clone());
+    diploidSequence.addSequence(seq1->getName(), seq1);
+    auto seq2 = unique_ptr<Sequence>(alignedSequences -> sequence(second_hap).clone());
+    diploidSequence.addSequence(seq2->getName(), seq2);
       
     vector< unsigned char > diploidSnps(diploidSequence.getNumberOfSites());
     
     for(size_t j = 0; j < diploidSequence.getNumberOfSites(); ++j) {
         
-      if(SiteTools::hasGap(diploidSequence.getSite(j)) || SiteTools::hasUnknown(diploidSequence.getSite(j))) {
+      if(SiteTools::hasGap(diploidSequence.site(j)) || SiteTools::hasUnknown(diploidSequence.site(j))) {
           
         diploidSnps[j] = 2u;
       }
       
       else {
           
-        bool snp = !SiteTools::isConstant(diploidSequence.getSite(j));
+        bool snp = !SiteTools::isConstant(diploidSequence.site(j));
         
         if(snp) {
           diploidSnps[j] = 1u;
@@ -272,8 +274,8 @@ void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) {
     
     indvSeqs_.push_back(diploidSnps);
     
-    indvNames_.push_back(alignedSequences -> getName(containerIndices[i]) + "-" +
-                         alignedSequences -> getName(containerIndices[i + 1]));
+    indvNames_.push_back(alignedSequences -> sequence(containerIndices[i]).getName() + "-" +
+                         alignedSequences -> sequence(containerIndices[i + 1]).getName());
   }
 }
    
@@ -300,7 +302,7 @@ void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput, filtering_is
     
   if(opt_ -> getMaskFileType() == "FASTA") {
     Fasta fastaReader;
-    shared_ptr< VectorSequenceContainer > callableMask(fastaReader.readSequences(maskFile, &AlphabetTools::DEFAULT_ALPHABET));
+    shared_ptr<SequenceContainerInterface> callableMask = fastaReader.readSequences(maskFile, AlphabetTools::DEFAULT_ALPHABET);
     vcfReader.maskSequences(callableMask, seqBreakpoints_);
   }
   

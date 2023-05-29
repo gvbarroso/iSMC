@@ -18,7 +18,7 @@ using namespace std;
 using namespace bpp;
 
 
-RowMatrix< double >* computeDiagonalHessian(DerivableSecondOrder& function, const ParameterList& parameters) {
+RowMatrix< double >* computeDiagonalHessian(SecondOrderDerivable& function, const ParameterList& parameters) {
 
   size_t n = parameters.size();
 

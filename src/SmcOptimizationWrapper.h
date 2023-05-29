@@ -152,7 +152,7 @@ private:
   
   void createAndFitSplinesModels_(bpp::ParameterList& nonSplinesParams);
     
-  void fitModel_(SplinesModel* sm);
+  void fitModel_(std::shared_ptr<SplinesModel> sm);
   
 };
 

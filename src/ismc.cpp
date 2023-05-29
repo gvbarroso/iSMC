@@ -325,11 +325,11 @@ int main(int argc, char *argv[]) {
         
       cout << endl << "Computing 95% confidence intervals of parameter estimates..." << endl;
       
-      SplinesModel* optimizedSplines = smcWrapper.selectBestModel().get();
+      auto optimizedSplines = smcWrapper.selectBestModel();
       ParameterList optimParams = optimizedSplines -> fetchModelParameters();
       vector< string > paramNames = optimParams.getParameterNames();
 
-      ThreePointsNumericalDerivative* tpnd = new ThreePointsNumericalDerivative(optimizedSplines);
+      auto tpnd = make_shared<ThreePointsNumericalDerivative>(optimizedSplines);
       tpnd -> enableFirstOrderDerivatives(true);
       tpnd -> enableSecondOrderDerivatives(true);
       

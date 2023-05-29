@@ -17,7 +17,7 @@
 
 extern size_t NUMBER_OF_AVAILABLE_THREADS;
 
-bpp::RowMatrix< double >* computeDiagonalHessian(bpp::DerivableSecondOrder& function, const bpp::ParameterList& parameters);
+bpp::RowMatrix< double >* computeDiagonalHessian(bpp::SecondOrderDerivable& function, const bpp::ParameterList& parameters);
 
 void invertDiagonalMatrix(const bpp::RowMatrix< double >& A, bpp::RowMatrix< double >& O);
 

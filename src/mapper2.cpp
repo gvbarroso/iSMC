@@ -336,16 +336,16 @@ vector< vector< char > > readSeqsFromFile(const string& fileName) {
   if(seqFile.is_open()) {
       
     Fasta reader;
-    unique_ptr< AlignedSequenceContainer > alnSeqs(reader.readAlignment(seqStream, &AlphabetTools::DEFAULT_ALPHABET));
+    auto alnSeqs = reader.readAlignment(seqStream, AlphabetTools::DEFAULT_ALPHABET);
   
     vector< vector< char > > seqs(alnSeqs -> getNumberOfSequences(), vector< char >(0)); //indv -> site
   
     for(size_t i = 0; i < seqs.size(); ++i) {
       
-      seqs[i].resize(alnSeqs -> getSequence(i).size());
+      seqs[i].resize(alnSeqs -> sequence(i).size());
     
       for(size_t j = 0; j < seqs[i].size(); ++j) {
-        seqs[i][j] = alnSeqs -> getSequence(i).getChar(j)[0];
+        seqs[i][j] = alnSeqs -> sequence(i).getChar(j)[0];
       }
     }
     

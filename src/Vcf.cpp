@@ -117,7 +117,7 @@ void Vcf::readSequences(filtering_istream& seqInput) {
 }
 
 //FASTA mask
-void Vcf::maskSequences(shared_ptr< VectorSequenceContainer > callableMask,
+void Vcf::maskSequences(shared_ptr< SequenceContainerInterface > callableMask,
                         const vector< pair< size_t, size_t > >& chrBreaks) { 
     
   cout << "Masking sequences..."; cout.flush(); 
@@ -135,7 +135,7 @@ void Vcf::maskSequences(shared_ptr< VectorSequenceContainer > callableMask,
         
       //NOTE assumes mask is sorted containing only chromosomes in the VCF
       //-1 becase snpCallings_ is indexed from 0 and coordinates in VCFs aren't  
-      string state = callableMask -> getSequence(i).getChar(j - 1);
+      string state = callableMask -> sequence(i).getChar(j - 1);
       
       //position of site j in chr i within the contiguous WGS (snpCallings_, indexed from 0)
       //adjusts coordinate since mask file has entire chromosome

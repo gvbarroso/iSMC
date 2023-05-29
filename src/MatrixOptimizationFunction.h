@@ -20,7 +20,7 @@
 
 
 class MatrixOptimizationFunction:
-  public bpp::Function,
+  public bpp::FunctionInterface,
   public bpp::AbstractParameterAliasable {
 protected:
   double totalDistance_;

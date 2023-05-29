@@ -32,7 +32,7 @@ private:
   mutable double newFunctionValue_;
 
 public:
-  RelativeStopCondition(const bpp::Optimizer* optimizer,
+  RelativeStopCondition(const bpp::OptimizerInterface* optimizer,
                         double likelihoodTolerance,
                         double paramValueTolerance):
   bpp::FunctionStopCondition(optimizer, likelihoodTolerance),
