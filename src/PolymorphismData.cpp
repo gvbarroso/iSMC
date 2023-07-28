@@ -205,7 +205,7 @@ void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
       else
         indvSeqs_[diploidIndex].push_back(1u);
         
-        ++diploidIndex;
+      ++diploidIndex;
     }
   }
 }

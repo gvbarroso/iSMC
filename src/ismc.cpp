@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
   
   cout << endl;
   cout << "******************************************************************" << endl;
-  cout << "*                    iSMC, version 0.0.23                        *" << endl;
+  cout << "*                    iSMC, version 0.0.25                        *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*            Recombination                                       *" << endl;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   cout << "*            Endless ancestors                                   *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
-  cout << "* Authors: G. Barroso                    Last Modif. 15/Dec/2022 *" << endl;
+  cout << "* Authors: G. Barroso                    Last Modif. 28/Jul/2023 *" << endl;
   cout << "*          J. Dutheil                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;
@@ -364,7 +364,7 @@ int main(int argc, char *argv[]) {
       
       if(smcOptions -> computeCovar()) {
           
-        RowMatrix< double >* hessian = NumTools::computeHessianMatrix(*tpnd, optimParams);
+        auto hessian = NumTools::computeHessianMatrix(*tpnd, optimParams);
         MatrixTools::inv(*hessian, varCovarMatrix);
         //prints covariance matrix
         ofstream outMatrix("varCovarMatrix.txt", ios::out);
