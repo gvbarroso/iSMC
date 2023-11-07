@@ -127,7 +127,7 @@ void SmcOptimizationWrapper::optimizeParameters(const ParameterList& backupParam
         
       params.addParameter(new Parameter(candidateSplineHeight, 1., Parameter::R_PLUS_STAR));
       params.addParameter(new Parameter(candidateSplineDeriv, 0.,
-                                      shared_ptr<Constraint>(new IntervalConstraint(-1., 1., true, true))));
+                                      make_shared<IntervalConstraint>(-1., 1., true, true)));
     }
   }
   params.matchParametersValues(backupParams);

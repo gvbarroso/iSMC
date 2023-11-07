@@ -343,7 +343,7 @@ int main(int argc, char *argv[]) {
       
       for(size_t i = 0; i < paramNames.size(); ++i) { //loops over paramNames because optimParams potentially changes size 
           
-        shared_ptr<Constraint> paramConstraint = optimParams.getParameter(paramNames[i]).getConstraint();
+        auto paramConstraint = optimParams.getParameter(paramNames[i]).getConstraint();
         
         //cf lines 203 / 204 of ThreePointsNumericalDerivative.cpp
         double h = (1. + abs(optimParams.getParameterValue(paramNames[i]))) * tpnd -> getInterval();
