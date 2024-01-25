@@ -208,7 +208,7 @@ VVVdouble MmSmcTransitionProbabilities::fetchCompositeTransitionMatrix(bool miss
 }
 
 //composition of transition matrices for different values of rho (but not scaled by rho trans probs as in MMHMM)
-VVVdouble MmSmcTransitionProbabilities::fetchCompositeTransitionMatrix(bool missingData, size_t numRhoCateg, shared_ptr< bpp::DiscreteDistribution > rhoScaling) {
+VVVdouble MmSmcTransitionProbabilities::fetchCompositeTransitionMatrix(bool missingData, size_t numRhoCateg, shared_ptr< bpp::DiscreteDistributionInterface > rhoScaling) {
 
   size_t numIntervals = mmsmc_ -> getNumberOfIntervals();
 

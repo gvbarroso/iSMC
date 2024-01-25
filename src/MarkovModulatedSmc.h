@@ -28,15 +28,15 @@ class MarkovModulatedSmc:
   public SequentiallyMarkovCoalescent {
 private:
   std::shared_ptr< HmmStatesLibrary > hmmSates_;
-  std::vector< std::shared_ptr< bpp::DiscreteDistribution > > paramScalings_;
-  std::vector< std::shared_ptr< ParameterCategoryTransitions > > categoryTransitions_;
+  std::vector<std::shared_ptr<bpp::DiscreteDistributionInterface>> paramScalings_;
+  std::vector<std::shared_ptr<ParameterCategoryTransitions>> categoryTransitions_;
 
 public:    
-  MarkovModulatedSmc(std::shared_ptr< OptionsContainer > smcOptions,
-                     const std::vector< std::vector < unsigned char > >& snpCallsFromAllDataSets,
-                     std::shared_ptr< HmmStatesLibrary > hmmSates,
-                     std::vector< std::shared_ptr< bpp::DiscreteDistribution > > paramScalings,
-                     std::vector< std::shared_ptr< ParameterCategoryTransitions > > categoryTransitions, 
+  MarkovModulatedSmc(std::shared_ptr<OptionsContainer> smcOptions,
+                     const std::vector<std::vector<unsigned char>>& snpCallsFromAllDataSets,
+                     std::shared_ptr<HmmStatesLibrary> hmmSates,
+                     std::vector<std::shared_ptr<bpp::DiscreteDistributionInterface>> paramScalings,
+                     std::vector<std::shared_ptr<ParameterCategoryTransitions>> categoryTransitions, 
                      const ParameterAlphabet& parameterAlphabet): 
   SequentiallyMarkovCoalescent(smcOptions, snpCallsFromAllDataSets),
   hmmSates_(hmmSates),
@@ -48,7 +48,7 @@ public:
                      double tMax,
                      const std::vector< std::vector < unsigned char > >& snpCallsFromAllDataSets,
                      std::shared_ptr< HmmStatesLibrary > hmmSates,
-                     std::vector< std::shared_ptr< bpp::DiscreteDistribution > > paramScalings,
+                     std::vector< std::shared_ptr< bpp::DiscreteDistributionInterface > > paramScalings,
                      std::vector< std::shared_ptr< ParameterCategoryTransitions > > categoryTransitions, 
                      const ParameterAlphabet& parameterAlphabet): 
   SequentiallyMarkovCoalescent(numIntervals, timeDisc, tMax, snpCallsFromAllDataSets),
@@ -62,7 +62,7 @@ public:
                      const bpp::ParameterList& rho_theta, 
                      const bpp::ParameterList& lambdas,
                      std::shared_ptr< HmmStatesLibrary > hmmSates,
-                     std::vector< std::shared_ptr< bpp::DiscreteDistribution > > paramScalings,
+                     std::vector< std::shared_ptr< bpp::DiscreteDistributionInterface > > paramScalings,
                      std::vector< std::shared_ptr< ParameterCategoryTransitions > > categoryTransitions, 
                      const ParameterAlphabet& parameterAlphabet): 
   SequentiallyMarkovCoalescent(numIntervals, timeDisc, tMax, rho_theta, lambdas),
@@ -75,7 +75,7 @@ public:
                      double tMax,
                      const bpp::ParameterList& optimParams, //all optimised parameters
                      std::shared_ptr< HmmStatesLibrary > hmmSates,
-                     std::vector< std::shared_ptr< bpp::DiscreteDistribution > > paramScalings,
+                     std::vector< std::shared_ptr< bpp::DiscreteDistributionInterface > > paramScalings,
                      std::vector< std::shared_ptr< ParameterCategoryTransitions > > categoryTransitions, 
                      const ParameterAlphabet& parameterAlphabet): 
   SequentiallyMarkovCoalescent(numIntervals, timeDisc, tMax, optimParams),
@@ -98,14 +98,14 @@ public:
   MarkovModulatedSmc* clone() const { return new MarkovModulatedSmc(*this); } 
 
 public:
-  std::vector< std::shared_ptr< bpp::DiscreteDistribution > >& getParameterScalings() {
+  std::vector< std::shared_ptr< bpp::DiscreteDistributionInterface > >& getParameterScalings() {
     return paramScalings_;
   }
-  const std::vector< std::shared_ptr< bpp::DiscreteDistribution > >& getParameterScalings() const {
+  const std::vector< std::shared_ptr< bpp::DiscreteDistributionInterface > >& getParameterScalings() const {
     return paramScalings_;
   }
   
-  void setParameterScalings(std::shared_ptr< bpp::DiscreteDistribution > newScaling, size_t index) {
+  void setParameterScalings(std::shared_ptr< bpp::DiscreteDistributionInterface > newScaling, size_t index) {
     paramScalings_[index] = newScaling;  
   }
   

@@ -36,7 +36,7 @@ private:
   
 public:
   HmmStatesLibrary(size_t numIntervals,
-                   const std::vector< std::shared_ptr< bpp::DiscreteDistribution > >& paramScalings,
+                   const std::vector<std::shared_ptr<bpp::DiscreteDistributionInterface>>& paramScalings,
                    const ParameterAlphabet& parameterAlphabet):
   numberOfHiddenStates_(0),
   numberOfModulatedParams_(0),
@@ -106,13 +106,13 @@ public:
   }
   
 private:
-  void computeNumberOfHiddenStates_(const std::vector< std::shared_ptr< bpp::DiscreteDistribution > >& paramScalings, size_t numIntervals);
+  void computeNumberOfHiddenStates_(const std::vector<std::shared_ptr<bpp::DiscreteDistributionInterface>>& paramScalings, size_t numIntervals);
 
-  void computeNumberOfModulatedParameters_(const std::vector< std::shared_ptr< bpp::DiscreteDistribution > >& paramScalings);
+  void computeNumberOfModulatedParameters_(const std::vector<std::shared_ptr<bpp::DiscreteDistributionInterface>>& paramScalings);
   
-  void arrangeHiddenStatesCombinations_(const std::vector< std::shared_ptr< bpp::DiscreteDistribution > >& paramScalings, size_t numIntervals);
+  void arrangeHiddenStatesCombinations_(const std::vector< std::shared_ptr<bpp::DiscreteDistributionInterface>>& paramScalings, size_t numIntervals);
   
-  std::vector< unsigned char > generateConversionSeries_(const std::vector< std::shared_ptr< bpp::DiscreteDistribution > >& paramScalings);
+  std::vector< unsigned char > generateConversionSeries_(const std::vector<std::shared_ptr<bpp::DiscreteDistributionInterface>>& paramScalings);
 
   std::vector< unsigned char > buildStateComb_(const std::vector< unsigned char >& conversionSeries, unsigned int hsIndex);
 

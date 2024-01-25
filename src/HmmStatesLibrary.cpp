@@ -13,7 +13,7 @@ using namespace std;
 using namespace boost::bimaps;
 
 
-void HmmStatesLibrary::computeNumberOfHiddenStates_(const vector< shared_ptr< DiscreteDistribution > >& paramScalings, size_t numIntervals) {
+void HmmStatesLibrary::computeNumberOfHiddenStates_(const vector< shared_ptr< DiscreteDistributionInterface > >& paramScalings, size_t numIntervals) {
   size_t numberOfCategoriesCombinations = 1;
   for(size_t i = 0; i < paramScalings.size(); ++i) {
     if(paramScalings[i] -> hasParameter("heat")) { //if Gamma+Hotspot model
@@ -31,7 +31,7 @@ void HmmStatesLibrary::computeNumberOfHiddenStates_(const vector< shared_ptr< Di
 }
 
 //NOTE delete?
-void HmmStatesLibrary::computeNumberOfModulatedParameters_(const vector< shared_ptr< DiscreteDistribution > >& paramScalings) {
+void HmmStatesLibrary::computeNumberOfModulatedParameters_(const vector< shared_ptr< DiscreteDistributionInterface > >& paramScalings) {
   for(size_t i = 0; i < paramScalings.size(); ++i) {
     if(paramScalings[i] -> getNumberOfCategories() > 1) { 
       ++numberOfModulatedParams_;
@@ -42,7 +42,7 @@ void HmmStatesLibrary::computeNumberOfModulatedParameters_(const vector< shared_
   }
 } 
 
-void HmmStatesLibrary::arrangeHiddenStatesCombinations_(const vector< shared_ptr< DiscreteDistribution > >& paramScalings, size_t numIntervals) {
+void HmmStatesLibrary::arrangeHiddenStatesCombinations_(const vector< shared_ptr< DiscreteDistributionInterface > >& paramScalings, size_t numIntervals) {
   //hidden states order: time, theta, rho and ne indices
   //regardless of how many of these are actually allowed to be heterogeneous
   hiddenStatesCombinations_.resize(numberOfHiddenStates_);
@@ -55,7 +55,7 @@ void HmmStatesLibrary::arrangeHiddenStatesCombinations_(const vector< shared_ptr
   }
 }
       
-vector< unsigned char > HmmStatesLibrary::generateConversionSeries_(const vector< shared_ptr< DiscreteDistribution > >& paramScalings) {
+vector< unsigned char > HmmStatesLibrary::generateConversionSeries_(const vector< shared_ptr< DiscreteDistributionInterface > >& paramScalings) {
   size_t numParam = paramScalings.size() + 1; //number of spatial parameters + 1 (for time)
   vector< unsigned char > conversionSeries(numParam);
   size_t mult = 1;

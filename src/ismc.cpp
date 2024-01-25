@@ -119,9 +119,9 @@ int main(int argc, char *argv[]) {
   
   //the spatial parameters: 
   double initalShape = 1.;
-  vector< shared_ptr< bpp::DiscreteDistribution > > paramScalings;
+  vector< shared_ptr< bpp::DiscreteDistributionInterface > > paramScalings;
 
-  shared_ptr< bpp::DiscreteDistribution > thetaScaling; //theta
+  shared_ptr< bpp::DiscreteDistributionInterface > thetaScaling; //theta
   if(smcOptions -> getThetaVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
   }
   paramScalings.push_back(thetaScaling); //theta occupies position 0 in the vector 
   
-  shared_ptr< bpp::DiscreteDistribution > rhoScaling; //rho 
+  shared_ptr< bpp::DiscreteDistributionInterface > rhoScaling; //rho 
   if(smcOptions -> getRhoVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };
@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
   
   paramScalings.push_back(rhoScaling); //rho occupies position 1 in the vector 
  
-  shared_ptr< bpp::DiscreteDistribution > neScaling; //Ne
+  shared_ptr< bpp::DiscreteDistributionInterface > neScaling; //Ne
   if(smcOptions -> getNeVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };

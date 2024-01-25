@@ -40,7 +40,7 @@ public:
 
   bpp::VVVdouble fetchCompositeTransitionMatrix(bool missingData);
   
-  bpp::VVVdouble fetchCompositeTransitionMatrix(bool missingData, size_t numRhoCateg, std::shared_ptr< bpp::DiscreteDistribution > rhoScaling);
+  bpp::VVVdouble fetchCompositeTransitionMatrix(bool missingData, size_t numRhoCateg, std::shared_ptr< bpp::DiscreteDistributionInterface > rhoScaling);
 
 private:  
   void setTransitionProbabilitiesEqualTime_(const bpp::Vdouble& rowSumVector, const std::vector< std::vector < unsigned char > >& hiddenStates);
