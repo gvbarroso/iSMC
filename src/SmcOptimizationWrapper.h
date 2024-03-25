@@ -73,7 +73,7 @@ public:
         
       //if hotspot model, only bring hotspot intensity to optimization (ie discard PMF probs.)
       if(mmsmc -> getParameterTransitions()[i] -> getHeterogeneousRateModel() == "Hotspot") {
-        bestParameters_.addParameter(mmsmc -> getParameterScalings()[i] -> getParameter("V2"));  
+        bestParameters_.addParameter(mmsmc -> getParameterScalings()[i] -> parameter("V2"));  
       }
       
       else if(mmsmc -> getParameterTransitions()[i] -> getHeterogeneousRateModel() == "Gamma") {
@@ -90,7 +90,7 @@ public:
         }
         
         else {
-          bestParameters_.addParameter(mmsmc -> getParameterScalings()[i] -> getParameter("heat"));
+          bestParameters_.addParameter(mmsmc -> getParameterScalings()[i] -> parameter("heat"));
         }
       }
     }

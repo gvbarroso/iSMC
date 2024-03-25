@@ -220,7 +220,7 @@ void SmcOptimizationWrapper::fireUpdateBestValues_(SplinesModel* bestSm, const P
     writeDemographyToFile();
     
     ParameterList estimParams = bestSm -> getParameters();
-    estimParams.addParameter(mmsmc_ -> getParameter("theta"));
+    estimParams.addParameter(mmsmc_ -> parameter("theta"));
     
     writeEstimatesToFile(estimParams, bestSm -> getLogLikelihood());
   }

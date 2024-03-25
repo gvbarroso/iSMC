@@ -109,7 +109,7 @@ void PolymorphismData::printSequencesToFile() {
     
   cout << "Writing sequences to file(s)..."; cout.flush();
  
-  size_t snpCounter = 0;
+  //size_t snpCounter = 0;
   for(size_t i = 0; i < seqBreakpoints_.size(); ++i) { //for every block
     
     auto focalBlock = seqBreakpoints_[i];
@@ -141,9 +141,9 @@ void PolymorphismData::printSequencesToFile() {
       vector< unsigned char > diploidFragment(leftEnd, rightEnd);
       
       for(auto& site : diploidFragment) {
-        if(site == 1u) {
-          ++snpCounter;
-        }
+        //if(site == 1u) {
+        //  ++snpCounter;
+        //}
         seqStream << static_cast< size_t >(site);
       }
       seqStream << endl;

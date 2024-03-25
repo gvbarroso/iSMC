@@ -80,8 +80,8 @@ public:
   averageCoalescenceTime_(numIntervals),
   lambdaVector_()
   { 
-    addParameter_(new bpp::Parameter(optimParams.getParameter("theta")));
-    addParameter_(new bpp::Parameter(optimParams.getParameter("rho")));
+    addParameter_(new bpp::Parameter(optimParams.parameter("theta")));
+    addParameter_(new bpp::Parameter(optimParams.parameter("rho")));
     
     setTimeIntervals(numIntervals, timeDisc, tMax);
   }
