@@ -3,7 +3,7 @@
 #   Julien Dutheil
 # Created: 16/04/2018
 
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.10)
 project (ismc CXX)
 
 # Compile options
