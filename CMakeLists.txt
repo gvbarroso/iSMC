@@ -3,11 +3,11 @@
 #   Julien Dutheil
 # Created: 16/04/2018
 
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.30)
 project (ismc CXX)
 
 # Compile options
-SET (CMAKE_CXX_FLAGS "-std=c++14 -Wall -Weffc++ -Wshadow -Wconversion -O3 -no-pie")
+add_compile_options(-std=c++14 -Wall -Weffc++ -Wshadow -Wconversion -O3)
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
@@ -22,7 +22,7 @@ IF(NOT NO_DEP_CHECK)
 ENDIF(NOT NO_DEP_CHECK)
 
 IF(NO_DEP_CHECK)
-  MESSAGE("-- Dependencies checking disabled. Only distribution can be built.")
+  MESSAGE(STATUS "Dependencies checking disabled. Only distribution can be built.")
 ELSE(NO_DEP_CHECK)
 
 
@@ -33,7 +33,7 @@ IF(NOT BUILD_STATIC)
       FORCE)
 ENDIF()
 IF(BUILD_STATIC)
-  MESSAGE("-- Static linkage requested.")
+  MESSAGE(STATUS "Static linkage requested.")
   #SET(CMAKE_CXX_FLAGS "-static -static-libgcc -static-libstdc++ -static-glibc ${CMAKE_CXX_FLAGS}")
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
   set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
@@ -42,15 +42,15 @@ ENDIF()
 
 # Use SimpleHMM?
 IF(NOT USE_LIBSIMPLEZIPHMM)
-  set(USE_LIBSIMPLEZIPHMM FALSE CACHE BOOL
+  set(USE_LIBSIMPLEZIPHMM TRUE CACHE BOOL
       "Use LibSimpleZipHMM."
       FORCE)
 ENDIF()
 
 # Find dependencies (add install directory to search)
-IF(CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}" ${CMAKE_PREFIX_PATH})
-ENDIF(CMAKE_INSTALL_PREFIX)
+if (CMAKE_INSTALL_PREFIX)
+  set (CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}" ${CMAKE_PREFIX_PATH})
+endif (CMAKE_INSTALL_PREFIX)
 
 INCLUDE(GNUInstallDirs)
 FIND_PACKAGE(bpp-phyl3 1.0.0 REQUIRED)
@@ -88,7 +88,7 @@ MACRO(IMPROVED_FIND_LIBRARY OUTPUT_LIBS lib_name include_to_find)
     SET(${lib_name}_STATIC_NAMES lib${lib_name}.a)
     FIND_LIBRARY(${lib_name}_STATIC_LIBRARY NAMES ${${lib_name}_STATIC_NAMES} PATH_SUFFIXES lib${LIB_SUFFIX})
     IF(${lib_name}_STATIC_LIBRARY)
-	    MESSAGE(STATUS "Library ${lib_name} found here:")
+      MESSAGE(STATUS "Library ${lib_name} found here:")
       MESSAGE("   includes: ${${lib_name}_INCLUDE_DIR}")
       MESSAGE("   static libraries: ${${lib_name}_STATIC_LIBRARY}")
     ELSE()
@@ -100,7 +100,7 @@ MACRO(IMPROVED_FIND_LIBRARY OUTPUT_LIBS lib_name include_to_find)
     SET(${lib_name}_NAMES ${lib_name} ${lib_name}.lib ${lib_name}.dll)
     FIND_LIBRARY(${lib_name}_LIBRARY NAMES ${${lib_name}_NAMES} PATH_SUFFIXES lib${LIB_SUFFIX})
     IF(${lib_name}_LIBRARY)
-	    MESSAGE(STATUS "Library ${lib_name} found here:")
+      MESSAGE(STATUS "Library ${lib_name} found here:")
       MESSAGE("   includes: ${${lib_name}_INCLUDE_DIR}")
       MESSAGE("   dynamic libraries: ${${lib_name}_LIBRARY}")
     ELSE()
