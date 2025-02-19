@@ -257,8 +257,6 @@ void SmcOptimizationWrapper::fitModel_(shared_ptr<SplinesModel> smf) {
   //smf potentially has both splines parameters and spatial rates parameters
   auto rfw = make_shared<ReparametrizationFunctionWrapper>(smf, smf -> fetchModelParameters()); //reparametrization of all params
 
-  auto tpnd = make_shared<ThreePointsNumericalDerivative>(smf);
-   
   unique_ptr< OptimizerInterface > chosenOptimizer;
 
   if(smcOptions_ -> getOptimizerOption() == "Powell") {
@@ -266,6 +264,8 @@ void SmcOptimizationWrapper::fitModel_(shared_ptr<SplinesModel> smf) {
   }
 
   else if(smcOptions_ -> getOptimizerOption() == "NewtonRhapson") {
+    auto tpnd = make_shared<ThreePointsNumericalDerivative>(rfw);
+   
       
     if(!smcOptions_ -> enforceFlatDemo()) {
       tpnd -> setParametersToDerivate(smf -> fetchModelParameters().getParameterNames());
@@ -294,32 +294,13 @@ void SmcOptimizationWrapper::fitModel_(shared_ptr<SplinesModel> smf) {
   auto messenger = make_shared<StlOutputStream>(make_unique<ofstream>(optimMsgs, ios::out));
   chosenOptimizer -> setMessageHandler(messenger);
     
-  if(smcOptions_ -> getOptimizerOption() == "Powell") {
-      
-    //usual case: we fit the splines models to capture demography
-    if(!smcOptions_ -> enforceFlatDemo()) {
-      chosenOptimizer -> init(rfw->getParameters());
-    }
-    
-    else { //to test the effect of assuming a flat demography
-      ReparametrizationFunctionWrapper tmp(smf, smf -> fetchNonSplinesParameters()); //reparam. of non-splines params
-      chosenOptimizer -> init(tmp.getParameters());  
-    }
+  //usual case: we fit the splines models to capture demography
+  if(!smcOptions_ -> enforceFlatDemo()) {
+    chosenOptimizer -> init(rfw->getParameters());
   }
-  
-  else if(smcOptions_ -> getOptimizerOption() == "NewtonRhapson") {
-      
-    chosenOptimizer -> setConstraintPolicy(AutoParameter::CONSTRAINTS_AUTO);
-    
-    //usual case: we fit the splines models to capture demography
-    if(!smcOptions_ -> enforceFlatDemo()) {
-      chosenOptimizer -> init(smf -> fetchModelParameters());
-    }
-    
-    else { //to test the effect of assuming a flat demography
-      chosenOptimizer -> init(smf -> fetchNonSplinesParameters());  
-    }
-    
+  else { //to test the effect of assuming a flat demography
+    ReparametrizationFunctionWrapper tmp(smf, smf -> fetchNonSplinesParameters()); //reparam. of non-splines params
+    chosenOptimizer -> init(tmp.getParameters());  
   }
   
   shared_ptr< FunctionStopCondition > stopCond;

@@ -9,6 +9,7 @@
 #define _BACKUPLISTENEROV_H_
 
 #include <Bpp/Numeric/Function/ReparametrizationFunctionWrapper.h>
+#include <Bpp/Numeric/Function/ThreePointsNumericalDerivative.h>
 #include <Bpp/Numeric/Function/Optimizer.h>
 #include <Bpp/Numeric/Function/Functions.h>
 
