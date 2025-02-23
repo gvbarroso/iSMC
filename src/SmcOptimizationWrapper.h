@@ -145,7 +145,7 @@ public:
   
   void writeEstimatesToFile(const bpp::ParameterList& params, double AIC);
 
-  void writeDemographyToFile();
+  void writeDemographyToFile(double theta);
 
 private:
   void fireUpdateBestValues_(SplinesModel* bestSm, const bpp::ParameterList &params);

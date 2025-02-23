@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
   
   cout << endl;
   cout << "******************************************************************" << endl;
-  cout << "*                    iSMC, version 0.0.25                        *" << endl;
+  cout << "*                    iSMC, version 1.0.0                         *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*            Recombination                                       *" << endl;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   cout << "*            Endless ancestors                                   *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
-  cout << "* Authors: G. Barroso                    Last Modif. 28/Jul/2023 *" << endl;
+  cout << "* Authors: G. Barroso                    Last Modif. 23/Feb/2025 *" << endl;
   cout << "*          J. Dutheil                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 
   
   /////////////////////////////////////////////////////////////////////////////////////////// 
-  cout << "Creating iSMC objects..."; cout.flush();
+  ApplicationTools::displayTask("Creating iSMC objects...");
   
   //Different indices than in hidden states combinations 
   ParameterAlphabet parameterAlphabet; //defined in HmmStatesLibrary.h
@@ -276,15 +276,31 @@ int main(int argc, char *argv[]) {
   shared_ptr< MmSmcEmissionProbabilities > emissions;
   shared_ptr< MultipleMmPsmc > multiMmPsmc;
   
-  cout << " done." << endl;
+  ApplicationTools::displayTaskDone();
   ///////////////////////////////////////////////////////////////////////////////////////////
-  
+  //Display some information about the model:
+  //
+
+  ApplicationTools::displayResult<string>("Spline model:", smcOptions->getSplinesTypeOption()); 
+  ApplicationTools::displayResult("Time discretization:", smcOptions->getTimeDisc()); 
+  ApplicationTools::displayResult("  Nb. time intervals:", smcOptions->getNumberOfIntervals() - 1); 
+  ApplicationTools::displayResult("Rho distribution:", smcOptions->getRhoVarModel()); 
+  ApplicationTools::displayResult("  Nb. rho categories:", smcOptions->getNumberOfRhoCateg()); 
+  ApplicationTools::displayResult("Theta distribution:", smcOptions->getThetaVarModel()); 
+  ApplicationTools::displayResult("  Nb. theta categories:", smcOptions->getNumberOfThetaCateg()); 
+  //Nb: model with variable Ne was not tested yet.
   
   //////////////////////////////////////////////////////////////////////////////////////////
   //Optimisation:
   if(smcOptions -> optimize()) {
     
-    cout << "Setting up optimisation." << endl;
+    cout << endl << "Setting up optimisation:" << endl << endl;
+    
+    ApplicationTools::displayResult("Optimizer:", smcOptions->getOptimizerOption()); 
+    ApplicationTools::displayBooleanResult("  Optimizer rel. stop cond.:", smcOptions -> relativeStopCond()); 
+    ApplicationTools::displayResult("  Optimizer precision:", smcOptions -> getFunctionTolerance()); 
+    if (smcOptions -> relativeStopCond())
+      ApplicationTools::displayResult("  Optimizer parameter precision:", smcOptions -> getParametersTolerance()); 
     
     unsigned int numIntervals = smcOptions -> getNumberOfIntervals();  
     hmmLib = make_shared< HmmStatesLibrary >(numIntervals, paramScalings, parameterAlphabet);
@@ -323,7 +339,7 @@ int main(int argc, char *argv[]) {
     
     if(smcOptions -> computeCI()) {
         
-      cout << endl << "Computing 95% confidence intervals of parameter estimates..." << endl;
+      cout << endl << "Computing 95% confidence intervals of parameter estimates:" << endl << endl;
       
       auto optimizedSplines = smcWrapper.selectBestModel();
       ParameterList optimParams = optimizedSplines -> fetchModelParameters();
@@ -417,7 +433,7 @@ int main(int argc, char *argv[]) {
   //Posterior decoding: ATM, using memory efficient version and focusing on spatial rate
   if(smcOptions -> decode()) {
     
-    cout << endl << "Initiating Posterior Decoding." << endl;
+    cout << endl << "Initiating Posterior Decoding:" << endl << endl;
     
     if(smcOptions -> decodeDiploidsParallel() && smcOptions -> decodeBreakpointsParallel()) {
       cout << "NOTE: parallelising over both diploids and breakpoints." << endl;

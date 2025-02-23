@@ -49,7 +49,7 @@ void Vcf::fetchBasicInfo(filtering_istream& seqInput) {
 
 void Vcf::readSequences(filtering_istream& seqInput) {
   
-  cout << "Parsing VCF file..."; cout.flush();  
+  ApplicationTools::displayTask("Parsing VCF file");
 
   fetchBasicInfo(seqInput);
   
@@ -112,7 +112,7 @@ void Vcf::readSequences(filtering_istream& seqInput) {
     }
   }
   
-  cout << " done." << endl;
+  ApplicationTools::displayTaskDone();
   //cout << snpCounter << " SNPs pre-masking." << endl;
 }
 
@@ -120,7 +120,7 @@ void Vcf::readSequences(filtering_istream& seqInput) {
 void Vcf::maskSequences(shared_ptr< SequenceContainerInterface > callableMask,
                         const vector< pair< size_t, size_t > >& chrBreaks) { 
     
-  cout << "Masking sequences..."; cout.flush(); 
+  ApplicationTools::displayTask("Masking sequences");
   
   size_t numChr = startCoordinates_.size();
   for(size_t i = 0; i < numChr; ++i) {
@@ -147,14 +147,14 @@ void Vcf::maskSequences(shared_ptr< SequenceContainerInterface > callableMask,
       }
     }
   }
-  cout << " done." << endl;
+  ApplicationTools::displayTaskDone();
 }
 
 //BED mask
 void Vcf::maskSequences(filtering_istream& mask, vector< vector< string > >& chrTable,
                         const vector< pair< size_t, size_t > >& chrBreaks) { 
     
-  cout << "Masking sequences..."; cout.flush(); 
+  ApplicationTools::displayTask("Masking sequences");
   
   string maskLine;
   vector< string > splitMaskLine(0);
@@ -206,7 +206,7 @@ void Vcf::maskSequences(filtering_istream& mask, vector< vector< string > >& chr
     ++maskLineCounter;
   }
   
-  cout << " done." << endl;
+  ApplicationTools::displayTaskDone();
 }
    
 void Vcf::maskSite_(size_t pos) {

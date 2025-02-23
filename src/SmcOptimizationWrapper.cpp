@@ -183,7 +183,7 @@ void SmcOptimizationWrapper::writeEstimatesToFile(const ParameterList& params, d
   parameterEstimates.close();    
 }
 
-void SmcOptimizationWrapper::writeDemographyToFile() {
+void SmcOptimizationWrapper::writeDemographyToFile(double theta) {
     
   Vdouble timeIntervals = mmsmc_ -> getTimeIntervals();
   
@@ -195,13 +195,13 @@ void SmcOptimizationWrapper::writeDemographyToFile() {
 
     demoHistory << setprecision(6);
 
-    demoHistory << timeIntervals[i];
+    demoHistory << timeIntervals[i] * theta / 2.;
     demoHistory << "\t";
     
-    demoHistory << timeIntervals[i + 1];
+    demoHistory << timeIntervals[i + 1] * theta / 2.;
     demoHistory << "\t";
     
-    demoHistory << bestParameters_.getParameterValue("l" + TextTools::toString(i));
+    demoHistory << bestParameters_.getParameterValue("l" + TextTools::toString(i)) * 2. / theta;
     demoHistory << endl;
   }
   
@@ -217,7 +217,7 @@ void SmcOptimizationWrapper::fireUpdateBestValues_(SplinesModel* bestSm, const P
     bestParameters_.matchParametersValues(params); //non-lambdas
     bestParameters_.matchParametersValues(mmsmc_ -> getLambdaVector()); //lambdas
     
-    writeDemographyToFile();
+    writeDemographyToFile(mmsmc_ -> parameter("theta").getValue());
     
     ParameterList estimParams = bestSm -> getParameters();
     estimParams.addParameter(mmsmc_ -> parameter("theta"));
@@ -252,7 +252,7 @@ void SmcOptimizationWrapper::createAndFitSplinesModels_(ParameterList& params) {
     
 void SmcOptimizationWrapper::fitModel_(shared_ptr<SplinesModel> smf) { 
   
-  std::cout << "\nOptimizing the following parameters:\n";
+  std::cout << endl << "Optimizing the following parameters:" << endl;
   smf -> fetchModelParameters().printParameters(cout);
   //smf potentially has both splines parameters and spatial rates parameters
   auto rfw = make_shared<ReparametrizationFunctionWrapper>(smf, smf -> fetchModelParameters()); //reparametrization of all params
@@ -329,7 +329,7 @@ void SmcOptimizationWrapper::fitModel_(shared_ptr<SplinesModel> smf) {
   
   smf -> computeAic();
 
-  cout << endl << endl << "logLikelihood = " << setprecision(6) << smf -> getLogLikelihood() << endl;
+  cout << endl << endl << "LogLikelihood = " << setprecision(6) << smf -> getLogLikelihood() << endl;
 
   ParameterList optimisedParams(smf -> getParameters());
   cout << endl << "Optimized iSMC parameters:" << endl;

@@ -24,8 +24,8 @@ void BackupListenerOv::optimizationStepPerformed(const OptimizationEvent& event)
   }
 
   ofstream bck(backupFile_.c_str(), ios::out);
-  double AIC = 2. * static_cast< double >(pl.size()) + 2. * event.getOptimizer()->function().getValue();
-  bck << "AIC = " << setprecision(20) << AIC << endl << endl;
+  //double AIC = 2. * static_cast< double >(pl.size()) + 2. * event.getOptimizer()->function().getValue();
+  bck << "AIC = " << setprecision(20) << - event.getOptimizer()->function().getValue() << endl << endl;
   
   for(size_t i = 0; i < pl.size(); ++i) {
     bck << pl[i].getName() << " " <<  setprecision(20) << pl[i].getValue() << endl;

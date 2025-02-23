@@ -44,11 +44,12 @@ void PolymorphismData::processInputSequences() {
     throw Exception("iSMC::Mis-specified sequence compression type.");
   }  
   
-  cout << "Opening sequence file: " << opt_ -> getSequenceFileName();
+  ApplicationTools::displayResult("Sequence file:", opt_ -> getSequenceFileName());
+  ApplicationTools::displayTask("Opening sequence file");
   cout.flush();
   ifstream seqFile(opt_ -> getSequenceFileName(), std::ios_base::in | std::ios_base::binary);  
   seqStream.push(seqFile);
-  cout << " Done." << endl;
+  ApplicationTools::displayTaskDone();
   
   if(!seqFile.is_open()) {
     throw bpp::Exception("iSMC::could not open seq. file: " + opt_ -> getSequenceFileName());    
@@ -74,13 +75,16 @@ void PolymorphismData::processInputSequences() {
       throw bpp::Exception("Mis-specified mask compression type!");
     }
   }
-  
+ 
+  ApplicationTools::displayResult("Mask file:", opt_ -> getMaskFileName());
+  ApplicationTools::displayTask("Opening mask file"); 
   ifstream maskFile(opt_ -> getMaskFileName(), std::ios_base::in | std::ios_base::binary); 
   maskStream.push(maskFile);
 
   if(!maskFile.is_open() && opt_ -> getMaskFileName() != "none") {
     throw bpp::Exception("iSMC::could not open mask file: " + opt_ -> getMaskFileName());    
   }
+  ApplicationTools::displayTaskDone();
 
   //converts DNA sequences into vectors of { 0, 1, 2 } 
   if(opt_ -> getFileType() == "FASTA") {  
@@ -107,7 +111,7 @@ void PolymorphismData::processInputSequences() {
 
 void PolymorphismData::printSequencesToFile() {
     
-  cout << "Writing sequences to file(s)..."; cout.flush();
+  ApplicationTools::displayTask("Writing sequences to file(s)");
  
   //size_t snpCounter = 0;
   for(size_t i = 0; i < seqBreakpoints_.size(); ++i) { //for every block
@@ -151,13 +155,13 @@ void PolymorphismData::printSequencesToFile() {
     
     boost::iostreams::close(seqStream);
   }
-  cout << " done." << endl;
+  ApplicationTools::displayTaskDone();
   //cout << snpCounter << " SNPs post-masking." << endl;
 }
 
 void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
   
-  cout << "Parsing SNP file." << endl; 
+  ApplicationTools::displayTask("Parsing SNP file"); 
   
   //to get breakpoints
   vector< vector< string > > chrTable = readTabFile_(opt_ -> getTabFileName());
@@ -208,11 +212,12 @@ void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
       ++diploidIndex;
     }
   }
+  ApplicationTools::displayTaskDone();
 }
   
 void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) { 
   
-  cout << "Parsing FASTA file." << endl; 
+  ApplicationTools::displayTask("Parsing FASTA file"); 
   
   //to get breakpoints
   vector< vector< string > > chrTable = readTabFile_(opt_ -> getTabFileName());
@@ -277,6 +282,7 @@ void PolymorphismData::callSnpsFromFasta(filtering_istream& seqInput) {
     indvNames_.push_back(alignedSequences -> sequence(containerIndices[i]).getName() + "-" +
                          alignedSequences -> sequence(containerIndices[i + 1]).getName());
   }
+  ApplicationTools::displayTaskDone();
 }
    
 void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput, filtering_istream& maskFile) { 
@@ -345,7 +351,7 @@ void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput) {
 
 vector< vector< string > > PolymorphismData::readTabFile_(const string& file) { 
   
-  cout << "Parsing Tab file..."; cout.flush();
+  ApplicationTools::displayTask("Parsing Tab file");
   
   vector< vector< string > > table(0, vector< string >(3));
   
@@ -379,7 +385,7 @@ vector< vector< string > > PolymorphismData::readTabFile_(const string& file) {
     throw bpp::Exception("iSMC::could not open Tab file:" + file);
   }
   
-  cout << "done." << endl;
+  ApplicationTools::displayTaskDone();
   
   return table;
 }
