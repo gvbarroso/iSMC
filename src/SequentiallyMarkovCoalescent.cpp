@@ -228,7 +228,7 @@ void SequentiallyMarkovCoalescent::discretizeTimeUsingTmax_(double tMax) {
 double SequentiallyMarkovCoalescent::fetchBiHaploidTheta_(const vector< unsigned char >& sequence) {
     
   double polymorphic = 0.;
-  size_t callable = 0;
+  double callable = 0.;
   
   for(size_t i = 0; i < sequence.size(); ++i) {
       
