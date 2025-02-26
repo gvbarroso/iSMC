@@ -189,9 +189,10 @@ void SmcOptimizationWrapper::writeDemographyToFile(double theta) {
   
   ofstream demoHistory;
   demoHistory.open(smcOptions_ -> getLabel() + "_demography.txt");
-  demoHistory << "lower_bound" << "\t" << "upper_bound" << "\t" << "scaled_coalescence_rate" << endl;
-
+  demoHistory << "time_index\tleft_time_boundary\tright_time_boundary\tlambda" << endl;
   for(size_t i = 0; i < mmsmc_ -> getNumberOfIntervals() - 1; ++i) {
+    demoHistory << i;
+    demoHistory << "\t";
 
     demoHistory << setprecision(6);
 
