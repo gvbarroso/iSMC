@@ -263,7 +263,7 @@ void SmcOptimizationWrapper::fitModel_(shared_ptr<SplinesModel> smf) {
     chosenOptimizer.reset(new PowellMultiDimensions(rfw));
   }
 
-  else if(smcOptions_ -> getOptimizerOption() == "NewtonRhapson") {
+  else if(smcOptions_ -> getOptimizerOption() == "NewtonRaphson") {
     auto tpnd = make_shared<ThreePointsNumericalDerivative>(rfw);
    
       
