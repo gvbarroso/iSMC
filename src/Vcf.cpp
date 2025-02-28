@@ -111,7 +111,7 @@ void Vcf::readSequences(filtering_istream& seqInput) {
       prevLine = splitLine;
     }
   }
-  
+
   ApplicationTools::displayTaskDone();
   //cout << snpCounter << " SNPs pre-masking." << endl;
 }
@@ -220,10 +220,10 @@ void Vcf::parseLowQualitySite_(const vector< string >& splitLine,
                                const vector< string >& prevLine) { 
   
   string chr = splitLine[0];
-  size_t siteCoord = static_cast< size_t >(stol(splitLine[1]));
+  size_t siteCoord = TextTools::to<size_t>(splitLine[1]);
   
   string prevChr = prevLine[0];
-  size_t prevSiteCoord = static_cast< size_t >(stol(prevLine[1])); 
+  size_t prevSiteCoord = TextTools::to<size_t>(prevLine[1]); 
   
   for(size_t i = 0; i < numDiploids_; ++i) {
     
@@ -238,25 +238,26 @@ void Vcf::parseLowQualitySite_(const vector< string >& splitLine,
 }
   
 void Vcf::parseHighQualitySite_(const vector< string >& splitLine,
-                                const vector< string >& prevLine, size_t& snpCounter) {
+                                const vector< string >& prevLine, 
+				size_t& snpCounter) {
   
   string chr = splitLine[0];
-  int siteCoord = static_cast< int >(stoi(splitLine[1]));
+  size_t siteCoord = TextTools::to<size_t>(splitLine[1]);
   
   string prevChr = prevLine[0];
-  int prevSiteCoord = static_cast< int >(stoi(prevLine[1])); 
+  size_t prevSiteCoord = TextTools::to<size_t>(prevLine[1]); 
   
   for(size_t i = 0; i < numDiploids_; ++i) {
    
     if(chr == prevChr) {
       //how many sites in-between positions (max to avoid -1 in weird cases of repeated coordinate)
-      int runOfState = siteCoord - prevSiteCoord - 1;//max(siteCoord - prevSiteCoord - 1, static_cast< size_t >(0)); 
-            
-      if(runOfState < 0) {
+      if (siteCoord <= prevSiteCoord) {
         throw bpp::Exception("iSMC::VCF position is likely duplicated = " + TextTools::toString(siteCoord));
+      } else {
+        size_t runOfState = siteCoord - prevSiteCoord - 1;//max(siteCoord - prevSiteCoord - 1, static_cast< size_t >(0)); 
+            
+        snpCallings_[i].insert(snpCallings_[i].end(), static_cast<size_t>(runOfState), stdState_); 
       }
-      
-      snpCallings_[i].insert(snpCallings_[i].end(), static_cast<size_t>(runOfState), stdState_); 
     }
     
     //calls genotype

@@ -119,7 +119,8 @@ private:
   void maskSite_(size_t pos);
   
   void parseHighQualitySite_(const std::vector< std::string >& splitLine,
-                             const std::vector< std::string >& prevLine, size_t& snpCounter);  
+                             const std::vector< std::string >& prevLine,
+			     size_t& snpCounter);  
 
  };
 

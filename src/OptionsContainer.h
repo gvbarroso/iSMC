@@ -135,7 +135,6 @@ public:
     if((diploidIndices_.size() % 2) != 0) {
       throw bpp::Exception("iSMC::Odd number of diploid indices!"); 
     }
-
   }
   
 public:
@@ -317,6 +316,7 @@ public:
   double getVcfFilterQuality() {
     return filterQualityVcf_;
   }
+
 };
 
 #endif
