@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 12/04/2018
- * Last modified: 15/12/2022
+ * Last modified: 27/03/2025
  *
  */
 
@@ -87,7 +87,7 @@ void PolymorphismData::processInputSequences() {
     callSnpsFromFasta(seqStream);
   }
     
-  else if(opt_ -> getFileType() == "VCF" || opt_ -> getFileType() == "cVCF") {
+  else if(opt_ -> getFileType() == "VCF" || opt_ -> getFileType() == "gVCF") {
     if(opt_ -> getMaskFileName() != "none") {
       callSnpsFromVcf(seqStream, maskStream);
     }
@@ -205,7 +205,7 @@ void PolymorphismData::callSnpsFromSnpFile(filtering_istream& seqInput) {
       else
         indvSeqs_[diploidIndex].push_back(1u);
         
-        ++diploidIndex;
+      ++diploidIndex;
     }
   }
 }

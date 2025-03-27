@@ -115,7 +115,7 @@ public:
                                                                      std::thread::hardware_concurrency(), "", true, 4)),
   breakpointStarts_(bpp::ApplicationTools::getVectorParameter<unsigned int>("breakpoint_starts", parameterOptions, ',', "0", "", true, 4)),
   breakpointEnds_(bpp::ApplicationTools::getVectorParameter<unsigned int>("breakpoint_ends", parameterOptions, ',', "0", "", true, 4)),
-  diploidIndices_(bpp::ApplicationTools::getVectorParameter<unsigned int>("diploid_indices", parameterOptions, ',', "(0,1)", "", true)),
+  diploidIndices_(bpp::ApplicationTools::getVectorParameter<unsigned int>("diploid_indices", parameterOptions, ',', "none", "", true, 1)),
   printSeqs_(bpp::ApplicationTools::getBooleanParameter("print_seqs", parameterOptions, false, "", true, 4)),
   resumeOptim_(bpp::ApplicationTools::getBooleanParameter("resume_optim", parameterOptions, false, "", true, 4)),
   optimize_(bpp::ApplicationTools::getBooleanParameter("optimize", parameterOptions, true)),

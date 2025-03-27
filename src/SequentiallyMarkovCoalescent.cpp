@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 12/04/2018
- * Last modified: 13/06/2019
+ * Last modified: 27/03/2025
  *
  */
 
@@ -228,7 +228,7 @@ void SequentiallyMarkovCoalescent::discretizeTimeUsingTmax_(double tMax) {
 double SequentiallyMarkovCoalescent::fetchBiHaploidTheta_(const vector< unsigned char >& sequence) {
     
   double polymorphic = 0.;
-  size_t callable = 0;
+  double callable = 0;
   
   for(size_t i = 0; i < sequence.size(); ++i) {
       

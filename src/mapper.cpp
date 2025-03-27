@@ -360,7 +360,7 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
   
   for(size_t i = 0; i < numUniqueBlocks; ++i) {
     
-    auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+    size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     VVdouble blockLand(numDiploids, Vdouble(0)); //indv -> site
         
     for(size_t j = 0; j < numDiploids; ++j) {
@@ -395,7 +395,7 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
       
     for(size_t i = 0; i < numUniqueBlocks; ++i) {
       
-     auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+     size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
      
      for(size_t j = 0; j < focalNumFrags; ++j) {
           
@@ -434,7 +434,7 @@ VVVdouble readTmrcaLandscapes(const string& label, size_t numDiploids,
   
   for(size_t i = 0; i < numUniqueBlocks; ++i) {
     
-    auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+    size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     
     VVdouble blockLand(numDiploids, Vdouble(0)); //indv -> site
         
@@ -713,8 +713,8 @@ int main(int argc, char *argv[]) {
         
         for(unsigned int l = 0; l < numWindows; ++l) {
        
-          //Note (jdutheil): startPos and endPos have to be signed integers. The conversion might lead to an error if numbers are very large
-	  VVVdouble::difference_type startPos = static_cast<VVVdouble::difference_type>(l * binSize);
+          // NOTE (jdutheil): startPos and endPos have to be signed integers. The conversion might lead to an error if numbers are very large
+          VVVdouble::difference_type startPos = static_cast<VVVdouble::difference_type>(l * binSize);
           VVVdouble::difference_type endPos = static_cast<VVVdouble::difference_type>((l + 1) * binSize - 1);
         
           if(endPos >= numSites) { 
