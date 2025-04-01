@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
   cout << endl;
 
   if(argc == 1) {
-    cout << "To use iSMC, please fill in the params file and simply call it from the command line: ismc params=[params_file].bpp" << endl;
+    cout << "To use iSMC, please fill in the params file and simply call it from the command line: ismc param=[params_file].bpp" << endl;
     cout << "For more information, please email gvbarroso@gmail.com" << endl;
     return(0);
   }  
