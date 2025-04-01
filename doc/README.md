@@ -4,7 +4,7 @@
 As such, input parameters are specified in an options file. Let's call this options file opt.bpp. To run `ismc` from the command-line:
 
 ```
-ismc params=opt.bpp
+ismc param=opt.bpp
 ```
 
 We now describe the options file for `ismc v1`. Although under the hood there are a number of options that can enable flexibility for specifying different models and ways to filter the input data, these have default parameters that we don't have to worry about in this starter guide. The options that we want to specify in opt.bpp are the following (in no particular order):
@@ -251,6 +251,6 @@ number_intervals = 30
 we can execute, e.g.:
 
 ```
-ismc params=opt.bpp DATA=altai_chr1 NB_KNOTS=3
+ismc param=opt.bpp DATA=altai_chr1 NB_KNOTS=3
 ```
 
