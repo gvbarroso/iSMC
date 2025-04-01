@@ -101,10 +101,10 @@ void ParameterCategoryTransitions::includeCategoryTransitionParameters_() {
   if(hetRateModel_ == "Hotspot") {
     double backHot = 2e-6;
     string transitionIntoHotspots = parameterPrefix_ + "_backHot";
-    categoryTransitions.addParameter(new Parameter(transitionIntoHotspots, backHot, shared_ptr<Constraint>(new IntervalConstraint(0., 1., true, true))));
+    categoryTransitions.addParameter(new Parameter(transitionIntoHotspots, backHot, make_shared<IntervalConstraint>(0., 1., true, true)));
     double hotBack = 5e-4;
     string transitionIntoBackground = parameterPrefix_ + "_hotBack";
-    categoryTransitions.addParameter(new Parameter(transitionIntoBackground, hotBack, shared_ptr<Constraint>(new IntervalConstraint(0., 1., true, true))));
+    categoryTransitions.addParameter(new Parameter(transitionIntoBackground, hotBack, make_shared<IntervalConstraint>(0., 1., true, true)));
   }
   else if(hetRateModel_ == "Gamma") {
     double selfTransitionProb = 1. - 1e-5;
@@ -112,19 +112,19 @@ void ParameterCategoryTransitions::includeCategoryTransitionParameters_() {
       selfTransitionProb = 1.;
     }    
     string paramName = parameterPrefix_ + "_ii";
-    categoryTransitions.addParameter(new Parameter(paramName, selfTransitionProb, shared_ptr<Constraint>(new IntervalConstraint(0., 1., true, true))));
+    categoryTransitions.addParameter(new Parameter(paramName, selfTransitionProb, make_shared<IntervalConstraint>(0., 1., true, true)));
   }
   else if(hetRateModel_ == "Gamma+Hotspot") {
     string kappa = parameterPrefix_ + "_k"; //transition into hotspots
     double kappaVal = 2e-6;
-    categoryTransitions.addParameter(new Parameter(kappa, kappaVal, shared_ptr<Constraint>(new IntervalConstraint(0., 1., true, true))));
+    categoryTransitions.addParameter(new Parameter(kappa, kappaVal, make_shared<IntervalConstraint>(0., 1., true, true)));
     //transition into gamma and transition between gamma categories have been re-parametrized 
     string transitionIntoBackground = parameterPrefix_ + "_v"; 
     double hotBack = 5e-4;
-    categoryTransitions.addParameter(new Parameter(transitionIntoBackground, hotBack, shared_ptr<Constraint>(new IntervalConstraint(0., 1., true, true))));
+    categoryTransitions.addParameter(new Parameter(transitionIntoBackground, hotBack, make_shared<IntervalConstraint>(0., 1., true, true)));
     string delta = parameterPrefix_ + "_d";
     double deltaVal = .9999;
-    categoryTransitions.addParameter(new Parameter(delta, deltaVal, shared_ptr<Constraint>(new IntervalConstraint(0., 1., true, true))));
+    categoryTransitions.addParameter(new Parameter(delta, deltaVal, make_shared<IntervalConstraint>(0., 1., true, true)));
   }
   addParameters_(categoryTransitions);
 }

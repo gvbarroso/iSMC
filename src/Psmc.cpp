@@ -77,7 +77,7 @@ vector< unsigned char > Psmc::fetchFragment(size_t genomicStart, size_t genomicE
   if (genomicStart >= biHaploidSnpCalling_.size())
     throw IndexOutOfBoundsException ("Psmc::fetchFragment. Starting position outside data range.", genomicStart, 0, biHaploidSnpCalling_.size());
   if (genomicEnd > biHaploidSnpCalling_.size())
-    throw IndexOutOfBoundsException ("Psmc::fetchFragment. Starting position outside data range.", genomicEnd, 0, biHaploidSnpCalling_.size());
+    throw IndexOutOfBoundsException ("Psmc::fetchFragment. Ending position outside data range.", genomicEnd, 0, biHaploidSnpCalling_.size());
   if (genomicStart > genomicEnd)
     throw Exception("Psmc::fetchFragment. Ending position before starting positions.");
 

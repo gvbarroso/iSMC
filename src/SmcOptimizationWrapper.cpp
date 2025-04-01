@@ -127,7 +127,7 @@ void SmcOptimizationWrapper::optimizeParameters(const ParameterList& backupParam
         
       params.addParameter(new Parameter(candidateSplineHeight, 1., Parameter::R_PLUS_STAR));
       params.addParameter(new Parameter(candidateSplineDeriv, 0.,
-                                      shared_ptr<Constraint>(new IntervalConstraint(-1., 1., true, true))));
+                                      make_shared<IntervalConstraint>(-1., 1., true, true)));
     }
   }
   params.matchParametersValues(backupParams);
@@ -140,7 +140,7 @@ void SmcOptimizationWrapper::optimizeParameters(const ParameterList& backupParam
                                                   smcOptions_ -> getInitNumberOfKnots(),
                                                   smcOptions_ -> getSplinesTypeOption()));
 
-  fitModel_(smf.get());
+  fitModel_(smf);
   listOfModels_.push_back(smf);
 
   //updates
@@ -183,25 +183,26 @@ void SmcOptimizationWrapper::writeEstimatesToFile(const ParameterList& params, d
   parameterEstimates.close();    
 }
 
-void SmcOptimizationWrapper::writeDemographyToFile() {
+void SmcOptimizationWrapper::writeDemographyToFile(double theta) {
     
   Vdouble timeIntervals = mmsmc_ -> getTimeIntervals();
   
   ofstream demoHistory;
   demoHistory.open(smcOptions_ -> getLabel() + "_demography.txt");
-  demoHistory << "lower_bound" << "\t" << "upper_bound" << "\t" << "scaled_coalescence_rate" << endl;
-
+  demoHistory << "time_index\tleft_time_boundary\tright_time_boundary\tlambda" << endl;
   for(size_t i = 0; i < mmsmc_ -> getNumberOfIntervals() - 1; ++i) {
+    demoHistory << i;
+    demoHistory << "\t";
 
     demoHistory << setprecision(6);
 
-    demoHistory << timeIntervals[i];
+    demoHistory << timeIntervals[i] * theta / 2.;
     demoHistory << "\t";
     
-    demoHistory << timeIntervals[i + 1];
+    demoHistory << timeIntervals[i + 1] * theta / 2.;
     demoHistory << "\t";
     
-    demoHistory << bestParameters_.getParameterValue("l" + TextTools::toString(i));
+    demoHistory << bestParameters_.getParameterValue("l" + TextTools::toString(i)) * 2. / theta;
     demoHistory << endl;
   }
   
@@ -217,10 +218,10 @@ void SmcOptimizationWrapper::fireUpdateBestValues_(SplinesModel* bestSm, const P
     bestParameters_.matchParametersValues(params); //non-lambdas
     bestParameters_.matchParametersValues(mmsmc_ -> getLambdaVector()); //lambdas
     
-    writeDemographyToFile();
+    writeDemographyToFile(mmsmc_ -> parameter("theta").getValue());
     
     ParameterList estimParams = bestSm -> getParameters();
-    estimParams.addParameter(mmsmc_ -> getParameter("theta"));
+    estimParams.addParameter(mmsmc_ -> parameter("theta"));
     
     writeEstimatesToFile(estimParams, bestSm -> getLogLikelihood());
   }
@@ -245,87 +246,65 @@ void SmcOptimizationWrapper::createAndFitSplinesModels_(ParameterList& params) {
     shared_ptr< SplinesModel > smf(new SplinesModel(mmsmc_, mmsmcep_, mmsmctp_, mPsmc_,
                                                     params, i, splinesType));
 
-    fitModel_(smf.get());
+    fitModel_(smf);
     listOfModels_.push_back(smf);
   }
 }
     
-void SmcOptimizationWrapper::fitModel_(SplinesModel* smf) { 
+void SmcOptimizationWrapper::fitModel_(shared_ptr<SplinesModel> smf) { 
   
-  std::cout << "\nOptimizing the following parameters:\n";
+  std::cout << endl << "Optimizing the following parameters:" << endl;
   smf -> fetchModelParameters().printParameters(cout);
   //smf potentially has both splines parameters and spatial rates parameters
-  ReparametrizationFunctionWrapper rfw(smf, smf -> fetchModelParameters()); //reparametrization of all params
+  auto rfw = make_shared<ReparametrizationFunctionWrapper>(smf, smf -> fetchModelParameters()); //reparametrization of all params
 
-  ThreePointsNumericalDerivative tpnd(smf);
-   
-  unique_ptr< Optimizer > chosenOptimizer;
+  unique_ptr< OptimizerInterface > chosenOptimizer;
 
   if(smcOptions_ -> getOptimizerOption() == "Powell") {
-    chosenOptimizer.reset(new PowellMultiDimensions(&rfw));
+    chosenOptimizer.reset(new PowellMultiDimensions(rfw));
   }
 
-  else if(smcOptions_ -> getOptimizerOption() == "NewtonRhapson") {
+  else if(smcOptions_ -> getOptimizerOption() == "NewtonRaphson") {
+    auto tpnd = make_shared<ThreePointsNumericalDerivative>(rfw);
+   
       
     if(!smcOptions_ -> enforceFlatDemo()) {
-      tpnd.setParametersToDerivate(smf -> fetchModelParameters().getParameterNames());
+      tpnd -> setParametersToDerivate(smf -> fetchModelParameters().getParameterNames());
     }
     
     else { //if a flat demography is specified in the params file, we don't derivate splines
-      tpnd.setParametersToDerivate(smf -> fetchNonSplinesParameters().getParameterNames());
+      tpnd -> setParametersToDerivate(smf -> fetchNonSplinesParameters().getParameterNames());
     }
     
-    tpnd.enableFirstOrderDerivatives(true);
-    tpnd.enableSecondOrderDerivatives(true);
-    tpnd.enableSecondOrderCrossDerivatives(false); //Pseudo-Newton
+    tpnd -> enableFirstOrderDerivatives(true);
+    tpnd -> enableSecondOrderDerivatives(true);
+    tpnd -> enableSecondOrderCrossDerivatives(false); //Pseudo-Newton
     
-    chosenOptimizer.reset(new PseudoNewtonOptimizer(&tpnd)); 
+    chosenOptimizer.reset(new PseudoNewtonOptimizer(tpnd)); 
   }
   
   else {
     throw Exception("iSMC::Mis-specified numerical_optimizer!");
   }
   
-  unique_ptr< StlOutputStream > profiler;
-  unique_ptr< StlOutputStream > messenger;
-
   string optimProfile = smcOptions_ -> getLabel() + "_" + TextTools::toString(smf -> getNumberOfKnots()) + "_knots_profile.txt";
-  profiler.reset(new StlOutputStream(new ofstream(optimProfile, ios::out)));
-  chosenOptimizer -> setProfiler(profiler.get());
+  auto profiler = make_shared<StlOutputStream>(make_unique<ofstream>(optimProfile, ios::out));
+  chosenOptimizer -> setProfiler(profiler);
   
   string optimMsgs = smcOptions_ -> getLabel() + "_" + TextTools::toString(smf -> getNumberOfKnots()) + "_knots_messages.txt";
-  messenger.reset(new StlOutputStream(new ofstream(optimMsgs, ios::out)));
-  chosenOptimizer -> setMessageHandler(messenger.get());
+  auto messenger = make_shared<StlOutputStream>(make_unique<ofstream>(optimMsgs, ios::out));
+  chosenOptimizer -> setMessageHandler(messenger);
     
-  if(smcOptions_ -> getOptimizerOption() == "Powell") {
-      
-    //usual case: we fit the splines models to capture demography
-    if(!smcOptions_ -> enforceFlatDemo()) {
-      chosenOptimizer -> init(rfw.getParameters());
-    }
-    
-    else { //to test the effect of assuming a flat demography
-      ReparametrizationFunctionWrapper tmp(smf, smf -> fetchNonSplinesParameters()); //reparam. of non-splines params
-      chosenOptimizer -> init(tmp.getParameters());  
-    }
+  //usual case: we fit the splines models to capture demography
+  if(!smcOptions_ -> enforceFlatDemo()) {
+    chosenOptimizer -> init(rfw->getParameters());
+  }
+  else { //to test the effect of assuming a flat demography
+    ReparametrizationFunctionWrapper tmp(smf, smf -> fetchNonSplinesParameters()); //reparam. of non-splines params
+    chosenOptimizer -> init(tmp.getParameters());  
   }
   
-  else if(smcOptions_ -> getOptimizerOption() == "NewtonRhapson") {
-      
-    chosenOptimizer -> setConstraintPolicy(AutoParameter::CONSTRAINTS_AUTO);
-    
-    //usual case: we fit the splines models to capture demography
-    if(!smcOptions_ -> enforceFlatDemo()) {
-      chosenOptimizer -> init(smf -> fetchModelParameters());
-    }
-    
-    else { //to test the effect of assuming a flat demography
-      chosenOptimizer -> init(smf -> fetchNonSplinesParameters());  
-    }
-    
-  }
-  
-  unique_ptr< FunctionStopCondition > stopCond;
+  shared_ptr< FunctionStopCondition > stopCond;
   
   if(smcOptions_ -> relativeStopCond()) {
     stopCond.reset(new RelativeStopCondition(chosenOptimizer.get(), smcOptions_ -> getFunctionTolerance(), smcOptions_ -> getParametersTolerance())); 
@@ -335,12 +314,12 @@ void SmcOptimizationWrapper::fitModel_(SplinesModel* smf) {
     stopCond.reset(new FunctionStopCondition(chosenOptimizer.get(), smcOptions_ -> getFunctionTolerance()));
   }
   
-  chosenOptimizer -> setStopCondition(*stopCond);
+  chosenOptimizer -> setStopCondition(stopCond);
   
   //handling optimisation issues, e.g. Powell: line minimization failing 
   try {
-    BackupListenerOv blo(smcOptions_ -> getLabel() + "_backup_params.txt");
-    chosenOptimizer -> addOptimizationListener(&blo);
+    auto blo = make_shared<BackupListenerOv>(smcOptions_ -> getLabel() + "_backup_params.txt");
+    chosenOptimizer -> addOptimizationListener(blo);
     chosenOptimizer -> optimize();
   }
   
@@ -351,7 +330,7 @@ void SmcOptimizationWrapper::fitModel_(SplinesModel* smf) {
   
   smf -> computeAic();
 
-  cout << endl << endl << "logLikelihood = " << setprecision(6) << smf -> getLogLikelihood() << endl;
+  cout << endl << endl << "LogLikelihood = " << setprecision(6) << smf -> getLogLikelihood() << endl;
 
   ParameterList optimisedParams(smf -> getParameters());
   cout << endl << "Optimized iSMC parameters:" << endl;

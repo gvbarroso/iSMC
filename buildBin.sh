@@ -1,6 +1,6 @@
 #! /bin/sh
 arch=`uname -m`
-version=0.0.23-1
+version=0.0.25-1
 
 strip src/ismc
 strip src/ismc_mapper

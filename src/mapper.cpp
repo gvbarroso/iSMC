@@ -328,16 +328,16 @@ vector< vector< char > > readSeqsFromFile(const string& fileName) {
   if(seqFile.is_open()) {
       
     Fasta reader;
-    unique_ptr< VectorSequenceContainer > alnSeqs(reader.readAlignment(seqStream, &AlphabetTools::DEFAULT_ALPHABET));
+    auto alnSeqs = reader.readAlignment(seqStream, AlphabetTools::DEFAULT_ALPHABET);
   
     vector< vector< char > > seqs(alnSeqs -> getNumberOfSequences(), vector< char >(0)); //indv -> site
   
     for(size_t i = 0; i < seqs.size(); ++i) {
       
-      seqs[i].resize(alnSeqs -> getSequence(i).size());
+      seqs[i].resize(alnSeqs -> sequence(i).size());
     
       for(size_t j = 0; j < seqs[i].size(); ++j) {
-        seqs[i][j] = alnSeqs -> getSequence(i).getChar(j)[0];
+        seqs[i][j] = alnSeqs -> sequence(i).getChar(j)[0];
       }
     }
     
@@ -352,22 +352,22 @@ vector< vector< char > > readSeqsFromFile(const string& fileName) {
 VVVdouble readRateLandscapes(const string& label, const string& rate, size_t numDiploids,
                              const vector< vector< size_t > >& decoordTable) {
   
-  cout << "Reading single-nucleotide " << rate << " landscapes..."; cout.flush();
+  ApplicationTools::displayTask("Reading single-nucleotide " + rate + " landscapes");
   
-  size_t numUniqueBlocks = set< size_t >(begin(decoordTable[2]), end(decoordTable[2])).size(); // ~chr
- //block -> diploid -> site
+  auto numUniqueBlocks = set< size_t >(begin(decoordTable[2]), end(decoordTable[2])).size(); // ~chr
+  //block -> diploid -> site
   VVVdouble allRateLandscapes(numUniqueBlocks, VVdouble(0, Vdouble(0)));
   
-  for(size_t i = 0; i < numUniqueBlocks; ++i) {
+  for(auto i = 0u; i < numUniqueBlocks; ++i) {
     
     size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     VVdouble blockLand(numDiploids, Vdouble(0)); //indv -> site
         
-    for(size_t j = 0; j < numDiploids; ++j) {
+    for(auto j = 0u; j < numDiploids; ++j) {
     
       Vdouble diploidLand(0); //sites
 
-      for(size_t k = 0; k < focalNumFrags; ++k) {
+      for(auto k = 0u; k < focalNumFrags; ++k) {
                 
         string file = label + "_diploid_" + TextTools::toString(j + 1) + "_block_" + TextTools::toString(i + 1) +
                       "_file_index_" + TextTools::toString(k + 1) + "_estimated_" + rate + ".txt.gz";
@@ -393,11 +393,11 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
     VVdouble avgLand(numUniqueBlocks, Vdouble(0)); //block -> site 
     VVdouble jointLand(numUniqueBlocks, Vdouble(0)); //block -> site
       
-    for(size_t i = 0; i < numUniqueBlocks; ++i) {
+    for(auto i = 0u; i < numUniqueBlocks; ++i) {
       
      size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
      
-     for(size_t j = 0; j < focalNumFrags; ++j) {
+     for(auto j = 0u; j < focalNumFrags; ++j) {
           
         string avgFile = label + "_average_" + rate + "_block_" + TextTools::toString(i + 1) +
                          "_file_index_" + TextTools::toString(j + 1) + ".txt.gz";
@@ -417,7 +417,7 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
     }
   } 
 
-  cout << "done." << endl;
+  ApplicationTools::displayTaskDone();
   
   return allRateLandscapes;
 }
@@ -425,24 +425,24 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
 VVVdouble readTmrcaLandscapes(const string& label, size_t numDiploids,
                               const vector< vector< size_t > >& decoordTable) {
   
-  cout << "Reading single-nucleotide TMRCA landscapes..."; cout.flush();
+  ApplicationTools::displayTask("Reading single-nucleotide TMRCA landscapes");
   
   size_t numUniqueBlocks = set< size_t >(begin(decoordTable[2]), end(decoordTable[2])).size(); // ~chr
     
   //block -> diploid -> site
   VVVdouble allTmrcaLandscapes(numUniqueBlocks, VVdouble(0, Vdouble(0)));
   
-  for(size_t i = 0; i < numUniqueBlocks; ++i) {
+  for(auto i = 0u; i < numUniqueBlocks; ++i) {
     
     size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     
     VVdouble blockLand(numDiploids, Vdouble(0)); //indv -> site
         
-    for(size_t j = 0; j < numDiploids; ++j) {
+    for(auto j = 0u; j < numDiploids; ++j) {
     
       Vdouble diploidLand(0); //sites
 
-      for(size_t k = 0; k < focalNumFrags; ++k) {
+      for(auto k = 0u; k < focalNumFrags; ++k) {
                 
         string file = label + "_diploid_" + TextTools::toString(j + 1) + 
                       "_block_" + TextTools::toString(i + 1) +
@@ -465,7 +465,7 @@ VVVdouble readTmrcaLandscapes(const string& label, size_t numDiploids,
     allTmrcaLandscapes[i] = blockLand;
   }
   
-  cout << "done." << endl;
+  ApplicationTools::displayTaskDone();
   
   return allTmrcaLandscapes;
 }
@@ -515,10 +515,10 @@ int main(int argc, char *argv[]) {
   
   cout << endl;
   cout << "******************************************************************" << endl;
-  cout << "*                 iSMC Mapper 1, version 0.0.9                   *" << endl;
+  cout << "*                 iSMC Mapper 1, version 1.0.0                   *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
-  cout << "* Authors: G. Barroso                     Last Modif. 19/07/2019 *" << endl;
+  cout << "* Authors: G. Barroso                     Last Modif. 24/02/2025 *" << endl;
   cout << "*          J. Dutheil                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;
@@ -583,28 +583,28 @@ int main(int argc, char *argv[]) {
   
   if(fastaSeqs) {
       
-    cout << "Reading FASTA sequences..."; cout.flush();  
+    ApplicationTools::displayTask("Reading FASTA sequences");
     seqs.resize(numBlocks, vector< vector< char > >(numDiploids, vector< char >(0)));
     
     for(size_t i = 0; i < numBlocks; ++i) {
       seqs[i] = readSeqsFromFile(label + ".block." + TextTools::toString(i + 1) + ".fasta.gz");
     }
-    cout << "done." << endl;  
+    ApplicationTools::displayTaskDone();
   }
   
   
   //to synchronise landscapes at the nucleotide level
   //eventually with an external map (eg DECODE)
-  cout << "Trimming landscape(s) according to tab file..."; cout.flush();
+  ApplicationTools::displayTask("Trimming landscape(s) according to tab file");
 
   for(size_t i = 0; i < numBlocks; ++i) { //block ~chr
     
     //cout << "numBlocks = " << numBlocks << "; numLandscapes = " << numLandscapes << endl;
     
-    //this assumes each block is a chr or scaffold
+    //this assumes each block is e.g. a chr or scaffold
     //in the original seq file and has not been further chopped
-    size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]);  
-    size_t upperCut = TextTools::to<size_t>(tabFile[i][6]);
+    size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]) - 1; // -1 to index from 0
+    size_t upperCut = TextTools::to<size_t>(tabFile[i][6]) - 1; // -1 to index from 0
     
     size_t alnStart = TextTools::to<size_t>(tabFile[i][1]) - 1; // -1 to index from 0
     size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1; // -1 to index from 0
@@ -668,7 +668,7 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  cout << "done." << endl;
+  ApplicationTools::displayTaskDone();
   
   
   //Finally binning
@@ -688,12 +688,12 @@ int main(int argc, char *argv[]) {
     //block -> diploid -> bin
     VVVdouble binRatePerBlock(numBlocks, VVdouble(numLandscapes, Vdouble(0))); 
     
-    cout << "Binning maps of size " << binSize << "..."; cout.flush();
+    ApplicationTools::displayTask("Binning maps of size " + TextTools::toString(binSize));
     
-    for(size_t j = 0; j < numBlocks; ++j) {
+    for(auto j = 0u; j < numBlocks; ++j) {
     
-      size_t numSites = allRateLandscapes[j].front().size();  
-      size_t numWindows = (numSites + binSize - 1) / binSize;
+      auto numSites = static_cast<VVVdouble::difference_type>(allRateLandscapes[j].front().size());  
+      auto numWindows = (numSites + binSize - 1) / binSize;
     
       //cout << "block " << j << "; numWindows = " << numWindows << "; numSites = " << numSites << "; binSize = " << binSize << endl;
       
@@ -709,14 +709,14 @@ int main(int argc, char *argv[]) {
       //all recombination maps for bin size i, for block j
       VVdouble binRate(numLandscapes, Vdouble(numWindows)); 
     
-      for(unsigned int k = 0; k < numLandscapes; ++k) { //diploids + avg and joint
+      for(auto k = 0u; k < numLandscapes; ++k) { //diploids + avg and joint
         
-        for(unsigned int l = 0; l < numWindows; ++l) {
+        for(auto l = 0u; l < numWindows; ++l) {
        
-          // NOTE (jdutheil): startPos and endPos have to be signed integers. The conversion might lead to an error if numbers are very large
-          VVVdouble::difference_type startPos = static_cast<VVVdouble::difference_type>(l * binSize);
-          VVVdouble::difference_type endPos = static_cast<VVVdouble::difference_type>((l + 1) * binSize - 1);
-        
+          //NOTE (jdutheil): startPos and endPos have to be signed integers. The conversion might lead to an error if numbers are very large
+          auto startPos = static_cast<VVVdouble::difference_type>(l * binSize);
+          auto endPos = static_cast<VVVdouble::difference_type>((l + 1) * binSize - 1);
+
           if(endPos >= numSites) { 
             endPos = static_cast<VVVdouble::difference_type>(numSites - 1);
           }
@@ -773,7 +773,7 @@ int main(int argc, char *argv[]) {
       writeBinnedInfoToFile(prefix, binSize, tabFile, labelsTable, binTmrcaPerBlock);
     }
     
-    cout << " done." << endl;
+    ApplicationTools::displayTaskDone();
   }
   
   mapper.done();

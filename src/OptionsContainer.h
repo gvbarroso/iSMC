@@ -94,7 +94,7 @@ public:
   thetaVarModel_(bpp::ApplicationTools::getStringParameter("theta_var_model", parameterOptions, "Gamma", "", true, 4)),
   rhoVarModel_(bpp::ApplicationTools::getStringParameter("rho_var_model",  parameterOptions, "Gamma", "", true, 4)),  
   neVarModel_(bpp::ApplicationTools::getStringParameter("ne_var_model", parameterOptions, "Gamma", "", true, 4)),
-  timeDisc_(bpp::ApplicationTools::getStringParameter("time_disc", parameterOptions, "quantiles", "", true, 4)),
+  timeDisc_(bpp::ApplicationTools::getStringParameter("time_disc", parameterOptions, "log_even", "", true, 4)),
   decRate_(bpp::ApplicationTools::getStringParameter("dec_rate", parameterOptions, "rho", "", true, 4)),
   sequenceFilePath_(bpp::ApplicationTools::getAFilePath("sequence_file_path", parameterOptions)),
   maskFilePath_(bpp::ApplicationTools::getAFilePath("mask_file_path", parameterOptions, false, false, "", false, "none", 4)),
@@ -129,7 +129,7 @@ public:
   restrictedModulation_(bpp::ApplicationTools::getBooleanParameter("restricted_modulation", parameterOptions, false, "", true, 4)),
   functionTolerance_(bpp::ApplicationTools::getDoubleParameter("function_tolerance", parameterOptions, 1e-4)),
   parametersTolerance_(bpp::ApplicationTools::getDoubleParameter("parameters_tolerance", parameterOptions, std::numeric_limits< double >::max(), "", true, 4)),
-  tMax_(bpp::ApplicationTools::getDoubleParameter("max_time", parameterOptions, 5., "", true, 4)),
+  tMax_(bpp::ApplicationTools::getDoubleParameter("max_time", parameterOptions, 15., "", true, 4)),
   filterQualityVcf_(bpp::ApplicationTools::getDoubleParameter("vcf_quality_filter", parameterOptions, 0., "", true, 4))
   {
     if((diploidIndices_.size() % 2) != 0) {
@@ -316,6 +316,7 @@ public:
   double getVcfFilterQuality() {
     return filterQualityVcf_;
   }
+
 };
 
 #endif

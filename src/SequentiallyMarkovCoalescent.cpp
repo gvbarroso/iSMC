@@ -45,7 +45,7 @@ void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, c
 }
 
 void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, const string& discMethod, double tMax, const bpp::ParameterList& lambdas) {
-    
+   
   averageCoalescenceTime_.resize(numIntervals);  
   timeIntervals_.resize(numIntervals);
   lambdaVector_ = lambdas;
@@ -189,7 +189,7 @@ ParameterList SequentiallyMarkovCoalescent::readParametersFromFile(const string&
         
       boost::split(splitLine, line, [](char c){ return c == ' '; });
       
-      if(splitLine.size() == 2) { //this is meant to skip the first line 'AIC = X'
+      if(splitLine.size() == 2) { //this is meant to skip the first line 'Log Lielihood = X'
           
         string name = splitLine[0];
         double value = atof(splitLine[1].c_str());
@@ -229,7 +229,7 @@ double SequentiallyMarkovCoalescent::fetchBiHaploidTheta_(const vector< unsigned
     
   double polymorphic = 0.;
   double callable = 0;
-  
+
   for(size_t i = 0; i < sequence.size(); ++i) {
       
     if(sequence[i] != 2u) { //skips missing information
@@ -242,7 +242,8 @@ double SequentiallyMarkovCoalescent::fetchBiHaploidTheta_(const vector< unsigned
     }
   }
   
-  cout << "polymorphic = " << polymorphic << "; callable = " << callable << endl;
+  ApplicationTools::displayResult("Nb. callable sites:", callable);
+  ApplicationTools::displayResult("Nb. polymorphic sites:", polymorphic);
   return polymorphic / callable;
 }
   

@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
   
   cout << endl;
   cout << "******************************************************************" << endl;
-  cout << "*                    iSMC, version 0.0.23                        *" << endl;
+  cout << "*                    iSMC, version 1.0.0                         *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*            Recombination                                       *" << endl;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   cout << "*            Endless ancestors                                   *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
-  cout << "* Authors: G. Barroso                    Last Modif. 15/Dec/2022 *" << endl;
+  cout << "* Authors: G. Barroso                    Last Modif. 23/Feb/2025 *" << endl;
   cout << "*          J. Dutheil                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 
   
   /////////////////////////////////////////////////////////////////////////////////////////// 
-  cout << "Creating iSMC objects..."; cout.flush();
+  ApplicationTools::displayTask("Creating iSMC objects...");
   
   //Different indices than in hidden states combinations 
   ParameterAlphabet parameterAlphabet; //defined in HmmStatesLibrary.h
@@ -119,9 +119,9 @@ int main(int argc, char *argv[]) {
   
   //the spatial parameters: 
   double initalShape = 1.;
-  vector< shared_ptr< bpp::DiscreteDistribution > > paramScalings;
+  vector< shared_ptr< bpp::DiscreteDistributionInterface > > paramScalings;
 
-  shared_ptr< bpp::DiscreteDistribution > thetaScaling; //theta
+  shared_ptr< bpp::DiscreteDistributionInterface > thetaScaling; //theta
   if(smcOptions -> getThetaVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
   }
   paramScalings.push_back(thetaScaling); //theta occupies position 0 in the vector 
   
-  shared_ptr< bpp::DiscreteDistribution > rhoScaling; //rho 
+  shared_ptr< bpp::DiscreteDistributionInterface > rhoScaling; //rho 
   if(smcOptions -> getRhoVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };
@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
   
   paramScalings.push_back(rhoScaling); //rho occupies position 1 in the vector 
  
-  shared_ptr< bpp::DiscreteDistribution > neScaling; //Ne
+  shared_ptr< bpp::DiscreteDistributionInterface > neScaling; //Ne
   if(smcOptions -> getNeVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };
@@ -276,15 +276,31 @@ int main(int argc, char *argv[]) {
   shared_ptr< MmSmcEmissionProbabilities > emissions;
   shared_ptr< MultipleMmPsmc > multiMmPsmc;
   
-  cout << " done." << endl;
+  ApplicationTools::displayTaskDone();
   ///////////////////////////////////////////////////////////////////////////////////////////
-  
+  //Display some information about the model:
+  //
+
+  ApplicationTools::displayResult<string>("Spline model:", smcOptions->getSplinesTypeOption()); 
+  ApplicationTools::displayResult("Time discretization:", smcOptions->getTimeDisc()); 
+  ApplicationTools::displayResult("  Nb. time intervals:", smcOptions->getNumberOfIntervals() - 1); 
+  ApplicationTools::displayResult("Rho distribution:", smcOptions->getRhoVarModel()); 
+  ApplicationTools::displayResult("  Nb. rho categories:", smcOptions->getNumberOfRhoCateg()); 
+  ApplicationTools::displayResult("Theta distribution:", smcOptions->getThetaVarModel()); 
+  ApplicationTools::displayResult("  Nb. theta categories:", smcOptions->getNumberOfThetaCateg()); 
+  //Nb: model with variable Ne was not tested yet.
   
   //////////////////////////////////////////////////////////////////////////////////////////
   //Optimisation:
   if(smcOptions -> optimize()) {
     
-    cout << "Setting up optimisation." << endl;
+    cout << endl << "Setting up optimisation:" << endl << endl;
+    
+    ApplicationTools::displayResult("Optimizer:", smcOptions->getOptimizerOption()); 
+    ApplicationTools::displayBooleanResult("  Optimizer rel. stop cond.:", smcOptions -> relativeStopCond()); 
+    ApplicationTools::displayResult("  Optimizer precision:", smcOptions -> getFunctionTolerance()); 
+    if (smcOptions -> relativeStopCond())
+      ApplicationTools::displayResult("  Optimizer parameter precision:", smcOptions -> getParametersTolerance()); 
     
     unsigned int numIntervals = smcOptions -> getNumberOfIntervals();  
     hmmLib = make_shared< HmmStatesLibrary >(numIntervals, paramScalings, parameterAlphabet);
@@ -323,13 +339,13 @@ int main(int argc, char *argv[]) {
     
     if(smcOptions -> computeCI()) {
         
-      cout << endl << "Computing 95% confidence intervals of parameter estimates..." << endl;
+      cout << endl << "Computing 95% confidence intervals of parameter estimates:" << endl << endl;
       
-      SplinesModel* optimizedSplines = smcWrapper.selectBestModel().get();
+      auto optimizedSplines = smcWrapper.selectBestModel();
       ParameterList optimParams = optimizedSplines -> fetchModelParameters();
       vector< string > paramNames = optimParams.getParameterNames();
 
-      ThreePointsNumericalDerivative* tpnd = new ThreePointsNumericalDerivative(optimizedSplines);
+      auto tpnd = make_shared<ThreePointsNumericalDerivative>(optimizedSplines);
       tpnd -> enableFirstOrderDerivatives(true);
       tpnd -> enableSecondOrderDerivatives(true);
       
@@ -343,7 +359,7 @@ int main(int argc, char *argv[]) {
       
       for(size_t i = 0; i < paramNames.size(); ++i) { //loops over paramNames because optimParams potentially changes size 
           
-        shared_ptr<Constraint> paramConstraint = optimParams.getParameter(paramNames[i]).getConstraint();
+        auto paramConstraint = optimParams.parameter(paramNames[i]).getConstraint();
         
         //cf lines 203 / 204 of ThreePointsNumericalDerivative.cpp
         double h = (1. + abs(optimParams.getParameterValue(paramNames[i]))) * tpnd -> getInterval();
@@ -364,7 +380,7 @@ int main(int argc, char *argv[]) {
       
       if(smcOptions -> computeCovar()) {
           
-        RowMatrix< double >* hessian = NumTools::computeHessianMatrix(*tpnd, optimParams);
+        auto hessian = NumTools::computeHessianMatrix(*tpnd, optimParams);
         MatrixTools::inv(*hessian, varCovarMatrix);
         //prints covariance matrix
         ofstream outMatrix("varCovarMatrix.txt", ios::out);
@@ -417,7 +433,7 @@ int main(int argc, char *argv[]) {
   //Posterior decoding: ATM, using memory efficient version and focusing on spatial rate
   if(smcOptions -> decode()) {
     
-    cout << endl << "Initiating Posterior Decoding." << endl;
+    cout << endl << "Initiating Posterior Decoding:" << endl << endl;
     
     if(smcOptions -> decodeDiploidsParallel() && smcOptions -> decodeBreakpointsParallel()) {
       cout << "NOTE: parallelising over both diploids and breakpoints." << endl;

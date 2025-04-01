@@ -105,7 +105,7 @@ public:
   void readSequences(boost::iostreams::filtering_istream& seqInput);
   
   //mask in FASTA format
-  void maskSequences(std::shared_ptr< bpp::VectorSequenceContainer > callableMask,
+  void maskSequences(std::shared_ptr< bpp::SequenceContainerInterface > callableMask,
                      const std::vector< std::pair< size_t, size_t > >& chrBreaks);
   
   //mask in BED format
@@ -119,7 +119,8 @@ private:
   void maskSite_(size_t pos);
   
   void parseHighQualitySite_(const std::vector< std::string >& splitLine,
-                             const std::vector< std::string >& prevLine, size_t& snpCounter);  
+                             const std::vector< std::string >& prevLine,
+			     size_t& snpCounter);  
 
  };
 

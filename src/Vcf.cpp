@@ -49,7 +49,7 @@ void Vcf::fetchBasicInfo(filtering_istream& seqInput) {
 
 void Vcf::readSequences(filtering_istream& seqInput) {
   
-  cout << "Parsing VCF file..."; cout.flush();  
+  ApplicationTools::displayTask("Parsing VCF file");
 
   fetchBasicInfo(seqInput);
   
@@ -111,16 +111,16 @@ void Vcf::readSequences(filtering_istream& seqInput) {
       prevLine = splitLine;
     }
   }
-  
-  cout << " done." << endl;
+
+  ApplicationTools::displayTaskDone();
   //cout << snpCounter << " SNPs pre-masking." << endl;
 }
 
 //FASTA mask
-void Vcf::maskSequences(shared_ptr< VectorSequenceContainer > callableMask,
+void Vcf::maskSequences(shared_ptr< SequenceContainerInterface > callableMask,
                         const vector< pair< size_t, size_t > >& chrBreaks) { 
     
-  cout << "Masking sequences..."; cout.flush(); 
+  ApplicationTools::displayTask("Masking sequences");
   
   size_t numChr = startCoordinates_.size();
   for(size_t i = 0; i < numChr; ++i) {
@@ -135,7 +135,7 @@ void Vcf::maskSequences(shared_ptr< VectorSequenceContainer > callableMask,
         
       //NOTE assumes mask is sorted containing only chromosomes in the VCF
       //-1 becase snpCallings_ is indexed from 0 and coordinates in VCFs aren't  
-      string state = callableMask -> getSequence(i).getChar(j - 1);
+      string state = callableMask -> sequence(i).getChar(j - 1);
       
       //position of site j in chr i within the contiguous WGS (snpCallings_, indexed from 0)
       //adjusts coordinate since mask file has entire chromosome
@@ -147,14 +147,14 @@ void Vcf::maskSequences(shared_ptr< VectorSequenceContainer > callableMask,
       }
     }
   }
-  cout << " done." << endl;
+  ApplicationTools::displayTaskDone();
 }
 
 //BED mask
 void Vcf::maskSequences(filtering_istream& mask, vector< vector< string > >& chrTable,
                         const vector< pair< size_t, size_t > >& chrBreaks) { 
     
-  cout << "Masking sequences..."; cout.flush(); 
+  ApplicationTools::displayTask("Masking sequences");
   
   string maskLine;
   vector< string > splitMaskLine(0);
@@ -206,7 +206,7 @@ void Vcf::maskSequences(filtering_istream& mask, vector< vector< string > >& chr
     ++maskLineCounter;
   }
   
-  cout << " done." << endl;
+  ApplicationTools::displayTaskDone();
 }
    
 void Vcf::maskSite_(size_t pos) {
@@ -220,10 +220,10 @@ void Vcf::parseLowQualitySite_(const vector< string >& splitLine,
                                const vector< string >& prevLine) { 
   
   string chr = splitLine[0];
-  size_t siteCoord = static_cast< size_t >(stol(splitLine[1]));
+  size_t siteCoord = TextTools::to<size_t>(splitLine[1]);
   
   string prevChr = prevLine[0];
-  size_t prevSiteCoord = static_cast< size_t >(stol(prevLine[1])); 
+  size_t prevSiteCoord = TextTools::to<size_t>(prevLine[1]); 
   
   for(size_t i = 0; i < numDiploids_; ++i) {
     
@@ -238,25 +238,26 @@ void Vcf::parseLowQualitySite_(const vector< string >& splitLine,
 }
   
 void Vcf::parseHighQualitySite_(const vector< string >& splitLine,
-                                const vector< string >& prevLine, size_t& snpCounter) {
+                                const vector< string >& prevLine, 
+				size_t& snpCounter) {
   
   string chr = splitLine[0];
-  int siteCoord = static_cast< int >(stoi(splitLine[1]));
+  size_t siteCoord = TextTools::to<size_t>(splitLine[1]);
   
   string prevChr = prevLine[0];
-  int prevSiteCoord = static_cast< int >(stoi(prevLine[1])); 
+  size_t prevSiteCoord = TextTools::to<size_t>(prevLine[1]); 
   
   for(size_t i = 0; i < numDiploids_; ++i) {
    
     if(chr == prevChr) {
       //how many sites in-between positions (max to avoid -1 in weird cases of repeated coordinate)
-      int runOfState = siteCoord - prevSiteCoord - 1;//max(siteCoord - prevSiteCoord - 1, static_cast< size_t >(0)); 
-            
-      if(runOfState < 0) {
+      if (siteCoord <= prevSiteCoord) {
         throw bpp::Exception("iSMC::VCF position is likely duplicated = " + TextTools::toString(siteCoord));
+      } else {
+        size_t runOfState = siteCoord - prevSiteCoord - 1;//max(siteCoord - prevSiteCoord - 1, static_cast< size_t >(0)); 
+            
+        snpCallings_[i].insert(snpCallings_[i].end(), static_cast<size_t>(runOfState), stdState_); 
       }
-      
-      snpCallings_[i].insert(snpCallings_[i].end(), static_cast<size_t>(runOfState), stdState_); 
     }
     
     //calls genotype
