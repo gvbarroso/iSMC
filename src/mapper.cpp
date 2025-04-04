@@ -278,7 +278,7 @@ void writeBinnedInfoToFile(const string& prefix, size_t binSize, const vector< v
    //to plot coordinates in the first and second columns of the bedgraph
     size_t lowerCut = TextTools::to<size_t>(tabFile[i][5]);  
     size_t upperCut = TextTools::to<size_t>(tabFile[i][6]);
-    size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1;
+    size_t alnEnd = TextTools::to<size_t>(tabFile[i][2]) - 1; // -1 to index from 0
     size_t starts = TextTools::to<size_t>(tabFile[i][1]) - 1; // -1 to index from 0
        
     if(lowerCut > starts) {

@@ -239,7 +239,7 @@ void Vcf::parseLowQualitySite_(const vector< string >& splitLine,
   
 void Vcf::parseHighQualitySite_(const vector< string >& splitLine,
                                 const vector< string >& prevLine, 
-				size_t& snpCounter) {
+                                size_t& snpCounter) {
   
   string chr = splitLine[0];
   size_t siteCoord = TextTools::to<size_t>(splitLine[1]);

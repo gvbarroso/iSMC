@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*            Recombination                                       *" << endl;
-  cout << "*            A mosaic in the genome                              *" << endl;
+  cout << "*            Mosaic in the genome                                *" << endl;
   cout << "*            Endless ancestors                                   *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;

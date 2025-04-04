@@ -105,7 +105,7 @@ NOTE: start and end coordinates are relative to the block, meaning they restart 
 6: bottom cut-off position from where `ismc_mapper` should start binning single-nucleotide rates into larger genomic windows.
 7: top cut-off position until where `ismc_mapper` should bin single-nucleotide rates into larger genomic windows.
 
-The last two columns are convenient to 'synchronise' coordinates when using `ismc_mapper`. This can happen when you want to consider a range of sites that matches that of another file. For example, if your input sequence data for chromosome 1 starts at position 5,000 and goes until position 10,000,000, and you want to 'synchronise' it with an experimental genetic map that ranges from position 10,000 to 8,000,000, the 6th and 7th columns of the first line of your tab_file should be  9,999 and 7,999,999. Otherwise, if you want to include all sites, they should be the same as the 2nd and 3rd columns.
+The last two columns are convenient to 'synchronise' coordinates when using `ismc_mapper`. This can happen when you want to consider a range of sites that matches that of another file. For example, if your input sequence data for chromosome 1 starts at position 5,000 and goes until position 10,000,000, and you want to 'synchronise' it with an experimental genetic map that ranges from position 10,000 to 8,000,000, the 6th and 7th columns of the first line of your tab\_file should be  10,000 and 8,000,000. Otherwise, if you want to include all sites, they should be the same as the 2nd and 3rd columns.
 
 An example file is given in the 'example' directory.
 Specify it in the options file with e.g.:
@@ -116,14 +116,14 @@ tab_file_path = my_tab.tsv
 
 ### Order of haplotype indices for building pseudo-diploids
 
-When data is phased and multiple haplotypes are available, `ismc` can combine them in user-defined pairs. These are specified as comma-separated INTEGERS enclosed by parentheses, indexed from zero. `ismc` will then combine these indices in non-overlapping pairs.
+When sequence data is in FASTA format and multiple haplotypes are available, `ismc` can combine them in user-defined pairs. These are specified as comma-separated INTEGERS enclosed by parentheses, indexed from zero. `ismc` will then combine haplotypes corresponding to consecutive pairs of indices.
 For example, to arrange three haplotypes into two pairs of genomes, where the first pair is made up of haplotypes #0 and 1 and the second pair is made up of haplotypes #1 and #2:
 
-NOTE: DEFAULT=?
+```
+diploid_indices = (0,1,1,2) // DEFAULT = (0,1)
+```
 
-```
-diploid_indices = (0,1,1,2) // DEFAULT = ?
-```
+NOTE: in VCF files, `ismc` cannot take advantage of phasing information (if present) and always treats all diploids as independent (the diploid\_indices option is irrelevant for VCFs).
 
 ### number of computing threads
 
@@ -153,9 +153,19 @@ decode = false
 
 NOTE: as the optimization and decoding steps require different computational resources, it is often a good idea to run `ismc` separately for each of these tasks.
 
+### bonus iSMC task
+
+Should `ismc` output a FASTA file summarizing the sequence of each diploid (BOOLEAN)?
+
+```
+print_seqs = true
+```
+
+NOTE: this FASTA file has '0' for homozygous sites, as well as '1' and '2' for heteryzous and masked-out sites, respectively. This is used by `mapper` (specifying fasta\_seqs = true in the `mapper` options file) to output bedgraphs with average pi and proportion of missing data per window.
+
 ### Recovering an interrupted optimization
 
-Depending on model complexity, sample size and genome length, the optimization step can take a long time to finish. This means that there are a lot of opportunities for something to go wrong in the middle of optimization (e.g., we reach the run-time limit we requested in the computing cluster). For this reason, `ismc` keeps an updated file with intermediate values for best fit parameters, called 'backup_params.txt'. We can then resume an interrupted optimization with the following option (BOOLEAN).
+Depending on model complexity, sample size and genome length, the optimization step can take a long time to finish. This means that there are a lot of opportunities for something to go wrong in the middle of optimization (e.g., we reach the run-time limit we requested in the computing cluster). For this reason, `ismc` keeps an updated file with intermediate values for best fit parameters, called '[label]\_backup\_params.txt'. We can then resume an interrupted optimization with the following option (BOOLEAN).
 
 ```
 resume_optim = true # DEFAULT = false
@@ -252,8 +262,9 @@ max_number_knots = $(NB_KNOTS)
 
 optimize = true 
 resume_optim = false
-
+print_seqs = true
 decode = false
+
 fragment_size = 10000000
 
 number_theta_categories = 1
