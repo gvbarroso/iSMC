@@ -1,11 +1,10 @@
 # A starter guide for creating the input files for iSMC
 
 `ismc` basic functionally is built around the bio++ libraries (https://github.com/BioPP)
-<<<<<<< HEAD
 As such, input parameters are specified in an 'options file'. Let's call this options file opt.bpp. To run 'ismc' from the command-line:
 
 ```
-ismc params=opt.bpp
+ismc param=opt.bpp
 ```
 
 We now describe the options file for `ismc v1`. Although under the hood there are a number of options that enable flexibility for specifying different models and ways to filter the input data, these have default parameters that we don't have to worry about here. The options that we want to specify in opt.bpp are the following (specify them in your preferred order):
@@ -14,31 +13,15 @@ We now describe the options file for `ismc v1`. Although under the hood there ar
 
 These are straightforward options related to the user interface, and NOT to the actual population genetics model.
 
-### dataset label
+### Dataset label
 
 A STRING parameter that will be appended to the output files, with the purpose of aid organization. For example:
-=======
-As such, input parameters are specified in an options file. Let's call this options file opt.bpp. To run `ismc` from the command-line:
-
-```
-ismc param=opt.bpp
-```
-
-We now describe the options file for `ismc v1`. Although under the hood there are a number of options that can enable flexibility for specifying different models and ways to filter the input data, these have default parameters that we don't have to worry about in this starter guide. The options that we want to specify in opt.bpp are the following (in no particular order):
-
-## Input/Output file options
-
-These are related to the user interface and not to the actual population genetics model.
-
-### dataset label
-
-A STRING parameter that will be appended to the output files, with the purpose of aiding organization. For example:
 
 ```
 dataset_label = altai_neanderthal
 ```
 
-### input file type
+### Input file type
 
 The type of the input sequence data (STRING). It can be either "FASTA", "VCF" or "gVCF".
 If "FASTA", 'N' characters and gaps will be masked out by `ismc`. 
@@ -67,7 +50,7 @@ seq_file_path = ../data/altai.vcf.gz
 
 ### mask file type
 
-The format of the mask file, mandatory if the input file type is VCF (STRING). It can be "FASTA" or "BED". The mask must contain only sites present in the sequence file, and in the exact same order. In the "BED" case, `ismc` will mask out (convert to missing data) sites that are present in this file (i.e., a "negative" mask). In the "FASTA" case, `ismc` will keep mask out sites that are NOT represented by either '1' or 'P' characters (the callable code).
+The format of the mask file, mandatory if the input file type is VCF (STRING). It can be "FASTA" or "BED". The mask must contain only sites present in the sequence file, and in the exact same order (this requirement extends to chromosome order). In the "BED" case, `ismc` will mask out (convert to missing data) sites that are present in this file (i.e., a "negative" mask). In the "FASTA" case, `ismc` will keep mask out sites that are NOT represented by either '1' or 'P' characters (the callable code).
 
 ```
 mask_file_type = # FASTA or BED
@@ -117,7 +100,7 @@ tab_file_path = my_tab.tsv
 ### Order of haplotype indices for building pseudo-diploids
 
 When sequence data is in FASTA format and multiple haplotypes are available, `ismc` can combine them in user-defined pairs. These are specified as comma-separated INTEGERS enclosed by parentheses, indexed from zero. `ismc` will then combine haplotypes corresponding to consecutive pairs of indices.
-For example, to arrange three haplotypes into two pairs of genomes, where the first pair is made up of haplotypes #0 and 1 and the second pair is made up of haplotypes #1 and #2:
+For example, to arrange three haplotypes into two pairs of genomes, where the first pair is made up of haplotypes #0 and #1 and the second pair is made up of haplotypes #1 and #2:
 
 ```
 diploid_indices = (0,1,1,2) // DEFAULT = (0,1)
@@ -161,7 +144,7 @@ Should `ismc` output a FASTA file summarizing the sequence of each diploid (BOOL
 print_seqs = true
 ```
 
-NOTE: this FASTA file has '0' for homozygous sites, as well as '1' and '2' for heteryzous and masked-out sites, respectively. This is used by `mapper` (specifying fasta\_seqs = true in the `mapper` options file) to output bedgraphs with average pi and proportion of missing data per window.
+NOTE: this FASTA file has '0' for homozygous sites, as well as '1' and '2' for heteryzous and masked-out sites, respectively. This file can be read by `mapper` (specifying fasta\_seqs = true in the `mapper` options file) to output bedgraphs with average pi and proportion of missing data per window. This is convenient for e.g. filtering the final bedgraph files.
 
 ### Recovering an interrupted optimization
 
