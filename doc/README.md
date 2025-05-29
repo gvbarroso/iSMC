@@ -1,21 +1,21 @@
 # A starter guide for creating the input files for iSMC
 
 `ismc` basic functionally is built around the bio++ libraries (https://github.com/BioPP)
-As such, input parameters are specified in an 'options file'. Let's call this options file opt.bpp. To run 'ismc' from the command-line:
+As such, input parameters are specified in an options file. Let's call this file opt.bpp. To run `ismc` from the command-line:
 
 ```
 ismc param=opt.bpp
 ```
 
-We now describe the options file for `ismc v1`. Although under the hood there are a number of options that enable flexibility for specifying different models and ways to filter the input data, these have default parameters that we don't have to worry about here. The options that we want to specify in opt.bpp are the following (specify them in your preferred order):
+We now describe the options file for `ismc v1`. Although under the hood there are a number of options that enable flexibility for specifying different models and ways to filter the input data, the most critical options are the following: 
 
 ## Input/Output file options
 
-These are straightforward options related to the user interface, and NOT to the actual population genetics model.
+These relate to the user interface, and not to the actual population genetics model.
 
 ### Dataset label
 
-A STRING parameter that will be appended to the output files, with the purpose of aid organization. For example:
+A STRING that will be appended to the output files to aid organization. For example:
 
 ```
 dataset_label = altai_neanderthal
@@ -50,7 +50,7 @@ seq_file_path = ../data/altai.vcf.gz
 
 ### mask file type
 
-The format of the mask file, mandatory if the input file type is VCF (STRING). It can be "FASTA" or "BED". The mask must contain only sites present in the sequence file, and in the exact same order (this requirement extends to chromosome order). In the "BED" case, `ismc` will mask out (convert to missing data) sites that are present in this file (i.e., a "negative" mask). In the "FASTA" case, `ismc` will keep mask out sites that are NOT represented by either '1' or 'P' characters (the callable code).
+The format of the mask file, mandatory if the input file type is VCF (STRING). It can be either "FASTA" or "BED". The mask must contain only sites present in the sequence file, and in the exact same order (this requirement extends to chromosome order). In the "BED" case, `ismc` will mask out (convert to missing data) sites that are present in this file (i.e., a "negative" mask). In the "FASTA" case, all sites in the sequence file must be present, and `ismc` will mask those that are NOT represented by either '1' or 'P' characters (the callable code).
 
 ```
 mask_file_type = # FASTA or BED
@@ -99,7 +99,7 @@ tab_file_path = my_tab.tsv
 
 ### Order of haplotype indices for building pseudo-diploids
 
-When sequence data is in FASTA format and multiple haplotypes are available, `ismc` can combine them in user-defined pairs. These are specified as comma-separated INTEGERS enclosed by parentheses, indexed from zero. `ismc` will then combine haplotypes corresponding to consecutive pairs of indices.
+When sequence data is in FASTA format and multiple haplotypes are available, `ismc` can combine them in user-defined pairs. These are specified as comma-separated INTEGERS enclosed by parentheses, indexed from zero. `ismc` will then combine haplotypes corresponding to consecutive, non-overlapping pairs of indices.
 For example, to arrange three haplotypes into two pairs of genomes, where the first pair is made up of haplotypes #0 and #1 and the second pair is made up of haplotypes #1 and #2:
 
 ```
@@ -144,7 +144,7 @@ Should `ismc` output a FASTA file summarizing the sequence of each diploid (BOOL
 print_seqs = true
 ```
 
-NOTE: this FASTA file has '0' for homozygous sites, as well as '1' and '2' for heteryzous and masked-out sites, respectively. This file can be read by `mapper` (specifying fasta\_seqs = true in the `mapper` options file) to output bedgraphs with average pi and proportion of missing data per window. This is convenient for e.g. filtering the final bedgraph files.
+NOTE: this FASTA file has '0' for homozygous sites, as well as '1' and '2' for heteryzous and masked-out sites, respectively. This file can be read by `mapper` (specifying fasta\_seqs = true in the `mapper` options file) to output bedgraphs with average nucleotide diversity as well as proportion of missing data per window. This is convenient for e.g. filtering the final bedgraph files based on a missing data threshold.
 
 ### Recovering an interrupted optimization
 
@@ -196,7 +196,7 @@ number_intervals = 30 # DEFAULT = 40
 
 ### Number of splines knots
 
-The number of "knots" where to anchor the splines curves taming the coalescence rates over time (INTEGER). These knots are distributed in the temporal axis, and define the number of curves to fit (which os equal to the number of knots + 1). By default, they are constrained to be strictly positive, to have derivative equal to zero at each end and to meet the adjacent splints at the junction points (Inverse coalescence rates are then mapped from the splines curves at each defined time interval).
+The number of "knots" where to anchor the splines curves taming the coalescence rates over time (INTEGER). These knots are distributed in the temporal axis, and define the number of curves to fit (which is equal to the number of knots + 1). By default, they are constrained to be strictly positive, to have derivative equal to zero at each end and to meet the adjacent splints at the junction points (Inverse coalescence rates are then mapped from the splines curves at each defined time interval).
 
 If this writing seems to convoluted, note that in practice having between 2 and 3 knots is usually a good choice.
 

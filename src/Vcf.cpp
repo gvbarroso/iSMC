@@ -125,6 +125,7 @@ void Vcf::maskSequences(shared_ptr< SequenceContainerInterface > callableMask,
   size_t numChr = startCoordinates_.size();
   for(size_t i = 0; i < numChr; ++i) {
     
+    cout << "N sites FASTA = " << callableMask -> sequence(i).size() << endl;
     //start of chr i within the WGS (snpCallings_)
     size_t chrStart = chrBreaks[i].first; 
     //start and end of coordinates (mapped to ref. genome) of chr i within the WGS (snpCallings_)
