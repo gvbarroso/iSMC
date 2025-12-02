@@ -47,6 +47,7 @@ private:
   unsigned int numberOfThetaCategories_;
   unsigned int numberOfRhoCategories_;
   unsigned int numberOfNeCategories_;
+  double maxRhoValue_;
   unsigned int numberOfIntervals_;
   //number of time intervals for posterior decoding; diff. from optim. because of speed
   unsigned int numberOfDecodingIntervals_;
@@ -105,6 +106,7 @@ public:
   numberOfThetaCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_theta_categories", parameterOptions, 1, "", true, 4)),
   numberOfRhoCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_rho_categories", parameterOptions, 1, "", true, 4)),
   numberOfNeCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_ne_categories", parameterOptions, 1, "", true, 4)),
+  maxRhoValue_(bpp::ApplicationTools::getDoubleParameter("max_rho_value", parameterOptions, 1, "", 100, 4)),
   numberOfIntervals_(bpp::ApplicationTools::getParameter<unsigned int>("number_intervals", parameterOptions, 40, "", true, 4) + 1), // +1 because timeInterval[0] = 0, present time
   numberOfDecodingIntervals_(bpp::ApplicationTools::getParameter<unsigned int>("number_intervals_decoding", parameterOptions, numberOfIntervals_, "", true, 4)),
   initNumberOfKnots_(bpp::ApplicationTools::getParameter<unsigned int>("init_number_knots", parameterOptions, 3, "", true, 4)),
@@ -206,43 +208,47 @@ public:
     return ignoredParams_;
   }
   
-  unsigned int getNumberOfThetaCateg() {
+  unsigned int getNumberOfThetaCateg() const {
     return numberOfThetaCategories_;
   }
   
-  unsigned int getNumberOfRhoCateg() {
+  unsigned int getNumberOfRhoCateg() const {
     return numberOfRhoCategories_;
   }
   
-  unsigned int getNumberOfNeCateg() {
+  unsigned int getNumberOfNeCateg() const {
     return numberOfNeCategories_;
   }
   
-  unsigned int getNumberOfIntervals() { 
+  unsigned int getNumberOfIntervals() const { 
     return numberOfIntervals_;
   }
   
-  unsigned int getNumberOfDecodingIntervals() {
+  double getMaxRhoValue() const {
+    return maxRhoValue_;
+  }
+  
+  unsigned int getNumberOfDecodingIntervals() const {
     return numberOfDecodingIntervals_;
   }
 
-  unsigned int getInitNumberOfKnots() {
+  unsigned int getInitNumberOfKnots() const {
     return initNumberOfKnots_;
   }
   
-  unsigned int getMaxNumberOfKnots() {
+  unsigned int getMaxNumberOfKnots() const {
     return maxNumberOfKnots_;
   }
   
-  unsigned int getMissingBlocksLength() {
+  unsigned int getMissingBlocksLength() const {
     return skipMissingBlocks_;
   }
 
-  unsigned int getFragmentSize() {
+  unsigned int getFragmentSize() const {
     return fragmentSize_;
   }
   
-  size_t getNumberOfThreads() {
+  size_t getNumberOfThreads() const {
     return numberOfThreads_;
   }
   

@@ -200,6 +200,16 @@ int main(int argc, char *argv[]) {
     rhoScaling -> discretize();
   }
   
+  else if(smcOptions -> getRhoVarModel() == "GammaEq") {
+    auto dist = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfRhoCateg(), initalShape, initalShape);
+    dist -> setNamespace("rho.");
+    dist -> aliasParameters("alpha", "beta");
+    dist -> restrictToConstraint(IntervalConstraint(0, smcOptions -> getMaxRhoValue(), true));
+    dist -> setDiscretizationPolicy(GammaDiscreteDistribution::DISCRETIZATION_EQUAL_INTERVAL);
+    dist -> discretize();
+    rhoScaling = dist;
+  }
+
   else {
     throw Exception("Mis-specified heterogeneity model for Rho!");
   }
@@ -247,7 +257,14 @@ int main(int argc, char *argv[]) {
   }
   
   paramScalings.push_back(neScaling); //ne occupies position 2 in the vector
-    
+  
+  //Show distributions:
+  ApplicationTools::displayTask("Initial rho prior distribution:"); ApplicationTools::message -> endLine();
+  rhoScaling -> print(*ApplicationTools::message);
+
+  ApplicationTools::displayTask("Initial theta prior distribution:"); ApplicationTools::message -> endLine();
+  thetaScaling -> print(*ApplicationTools::message);
+
   //transitions between parameter categories
   vector< shared_ptr< ParameterCategoryTransitions > > categoryTransitions;
 
@@ -336,6 +353,15 @@ int main(int argc, char *argv[]) {
     else {
       smcWrapper.optimizeParameters();
     }
+  
+    //Show distributions:
+    ApplicationTools::displayTask("Final rho prior distribution:"); ApplicationTools::message -> endLine();
+    rhoScaling -> print(*ApplicationTools::message);
+
+    ApplicationTools::displayTask("Final theta prior distribution:"); ApplicationTools::message -> endLine();
+    thetaScaling -> print(*ApplicationTools::message);
+
+
     
     if(smcOptions -> computeCI()) {
         
