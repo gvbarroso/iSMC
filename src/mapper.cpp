@@ -360,7 +360,7 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
   
   for(auto i = 0u; i < numUniqueBlocks; ++i) {
     
-    size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+    auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     VVdouble blockLand(numDiploids, Vdouble(0)); //indv -> site
         
     for(auto j = 0u; j < numDiploids; ++j) {
@@ -395,7 +395,7 @@ VVVdouble readRateLandscapes(const string& label, const string& rate, size_t num
       
     for(auto i = 0u; i < numUniqueBlocks; ++i) {
       
-     size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+     auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
      
      for(auto j = 0u; j < focalNumFrags; ++j) {
           
@@ -434,7 +434,7 @@ VVVdouble readTmrcaLandscapes(const string& label, size_t numDiploids,
   
   for(auto i = 0u; i < numUniqueBlocks; ++i) {
     
-    size_t focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
+    auto focalNumFrags = count(begin(decoordTable[2]), end(decoordTable[2]), i + 1);
     
     VVdouble blockLand(numDiploids, Vdouble(0)); //indv -> site
         
@@ -693,7 +693,7 @@ int main(int argc, char *argv[]) {
     for(auto j = 0u; j < numBlocks; ++j) {
     
       auto numSites = static_cast<VVVdouble::difference_type>(allRateLandscapes[j].front().size());  
-      auto numWindows = (numSites + binSize - 1) / binSize;
+      auto numWindows = (static_cast<size_t>(numSites) + binSize - 1) / binSize;
     
       //cout << "block " << j << "; numWindows = " << numWindows << "; numSites = " << numSites << "; binSize = " << binSize << endl;
       
