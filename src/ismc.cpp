@@ -194,22 +194,32 @@ int main(int argc, char *argv[]) {
   }
   
   else if(smcOptions -> getRhoVarModel() == "Gamma") {
-    rhoScaling = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfRhoCateg(), initalShape, initalShape);
-    rhoScaling -> setNamespace("rho.");
-    rhoScaling -> aliasParameters("alpha", "beta");
-    rhoScaling -> discretize();
+    double maxRho = smcOptions -> getMaxRhoValue();
+    vector<double> rhoBounds = smcOptions -> getRhoBoundaries();
+    if (maxRho > 0) {
+      // Use equal interval between 0 and Rho max:
+      auto dist = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfRhoCateg(), initalShape, initalShape);
+      dist -> setNamespace("rho.");
+      dist -> aliasParameters("alpha", "beta");
+      dist -> restrictToConstraint(IntervalConstraint(0, maxRho, true));
+      dist -> setDiscretizationPolicy(GammaDiscreteDistribution::DISCRETIZATION_EQUAL_INTERVAL);
+      dist -> discretize();
+      rhoScaling = dist;
+    } else if (rhoBounds.size() > 0) {
+      // Use fixed, predefined intervals:
+      rhoScaling = make_shared< GammaDiscreteDistribution >(rhoBounds, initalShape, initalShape);
+      rhoScaling -> setNamespace("rho.");
+      rhoScaling -> aliasParameters("alpha", "beta");
+      rhoScaling -> discretize();
+    } else {
+      // Use equi-probable categories
+      rhoScaling = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfRhoCateg(), initalShape, initalShape);
+      rhoScaling -> setNamespace("rho.");
+      rhoScaling -> aliasParameters("alpha", "beta");
+      rhoScaling -> discretize();
+    }
   }
   
-  else if(smcOptions -> getRhoVarModel() == "GammaEq") {
-    auto dist = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfRhoCateg(), initalShape, initalShape);
-    dist -> setNamespace("rho.");
-    dist -> aliasParameters("alpha", "beta");
-    dist -> restrictToConstraint(IntervalConstraint(0, smcOptions -> getMaxRhoValue(), true));
-    dist -> setDiscretizationPolicy(GammaDiscreteDistribution::DISCRETIZATION_EQUAL_INTERVAL);
-    dist -> discretize();
-    rhoScaling = dist;
-  }
-
   else {
     throw Exception("Mis-specified heterogeneity model for Rho!");
   }
@@ -258,13 +268,6 @@ int main(int argc, char *argv[]) {
   
   paramScalings.push_back(neScaling); //ne occupies position 2 in the vector
   
-  //Show distributions:
-  ApplicationTools::displayTask("Initial rho prior distribution:"); ApplicationTools::message -> endLine();
-  rhoScaling -> print(*ApplicationTools::message);
-
-  ApplicationTools::displayTask("Initial theta prior distribution:"); ApplicationTools::message -> endLine();
-  thetaScaling -> print(*ApplicationTools::message);
-
   //transitions between parameter categories
   vector< shared_ptr< ParameterCategoryTransitions > > categoryTransitions;
 
@@ -306,7 +309,15 @@ int main(int argc, char *argv[]) {
   ApplicationTools::displayResult("Theta distribution:", smcOptions->getThetaVarModel()); 
   ApplicationTools::displayResult("  Nb. theta categories:", smcOptions->getNumberOfThetaCateg()); 
   //Nb: model with variable Ne was not tested yet.
-  
+ 
+  //Show distributions:
+  ApplicationTools::displayTask("Initial rho prior distribution:"); ApplicationTools::message -> endLine();
+  rhoScaling -> print(*ApplicationTools::message);
+
+  ApplicationTools::displayTask("Initial theta prior distribution:"); ApplicationTools::message -> endLine();
+  thetaScaling -> print(*ApplicationTools::message);
+
+ 
   //////////////////////////////////////////////////////////////////////////////////////////
   //Optimisation:
   if(smcOptions -> optimize()) {

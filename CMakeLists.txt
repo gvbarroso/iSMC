@@ -3,11 +3,19 @@
 #   Julien Dutheil
 # Created: 16/04/2018
 
-cmake_minimum_required (VERSION 3.10)
-project (ismc CXX)
+cmake_minimum_required(VERSION 3.10)
+project(ismc CXX)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Compile options
-add_compile_options(-std=c++14 -Wall -Weffc++ -Wshadow -Wconversion -O3)
+add_compile_options(-Wall -Weffc++ -Wshadow -Wconversion -O3)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOSX TRUE)
+    # May help on MacOS:
+    add_compile_options(-DACCELERATE_NEW_LAPACK -DACCELERATE_LAPACK_ILP64 -framework Accelerate -flax-vector-conversions)
+endif()
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
@@ -53,7 +61,7 @@ if (CMAKE_INSTALL_PREFIX)
 endif (CMAKE_INSTALL_PREFIX)
 
 INCLUDE(GNUInstallDirs)
-FIND_PACKAGE(bpp-phyl3 1.0.0 REQUIRED)
+FIND_PACKAGE(bpp-phyl 3.0.0 REQUIRED)
 
 SET(THREADS_PREFER_PTHREAD_FLAG ON)
 FIND_PACKAGE(Threads REQUIRED)
@@ -69,13 +77,13 @@ ENDIF()
 # Boost:
 SET(Boost_USE_STATIC_LIBS ${BUILD_STATIC})
 SET(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE( Boost 1.36.0 COMPONENTS iostreams )
+FIND_PACKAGE( Boost CONFIG COMPONENTS iostreams )
 IF(Boost_FOUND)
   INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
   SET(LIBS ${LIBS} ${Boost_LIBRARIES})
   MESSAGE("-- Boost libraries found here:")
   MESSAGE("   includes: ${Boost_INCLUDE_DIRS}")
-  MESSAGE("   dynamic libraries: ${Boost_LIBRARIES}")
+  MESSAGE("   libraries: ${Boost_LIBRARIES}")
 ENDIF()
 
 #here is a useful function:

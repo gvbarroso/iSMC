@@ -1,24 +1,27 @@
 // In this example we use chromosomes 1-4 from a single individual from the SGDP.
 // The options suggested here minimize the use of computing resources but can be further tuned (see below).
 
-dataset_label = example 
+dataset_label = example
 
 input_file_type = VCF
-sequence_file_path = LP6005592-DNA_D03.chr.1-4.vcf.gz
+sequence_file_path = chr9.YRI.NA18486.norm.vcf.gz
 seq_compression_type = gzip
 
-mask_file_path = mask.sgdp.chr.1-4.fasta.gz
-mask_file_type = FASTA
+mask_file_path = 20160622.chr9.negmask.bed.gz
+mask_file_type = BED
 mask_compression_type = gzip
 
 tab_file_path = example.tab
 
+init_number_knots = 2
+max_number_knots = 4
+
 optimize = true 
-decode = true
+decode = false
 
 function_tolerance = 1e-1
 
-// Adjust according to the number of CPUs available; here one per chromosome (faster):
+// Adjust according to the number of CPUs available
 number_threads = 4
 
 number_intervals = 25
