@@ -210,7 +210,7 @@ int main(int argc, char *argv[]) {
       rhoScaling -> setNamespace("rho.");
       rhoScaling -> aliasParameters("alpha", "beta");
       rhoScaling -> discretize();
-      nbRhoCategories = smcOptions -> getNumberOfRhoCateg();
+      nbRhoCategories = rhoBounds.size() - 1;
     } else {
       // Use equi-probable categories
       rhoScaling = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfRhoCateg(), initalShape, initalShape);
