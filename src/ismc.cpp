@@ -305,7 +305,7 @@ int main(int argc, char *argv[]) {
   ApplicationTools::displayResult("Time discretization:", smcOptions->getTimeDisc()); 
   ApplicationTools::displayResult("  Nb. time intervals:", smcOptions->getNumberOfIntervals() - 1); 
   ApplicationTools::displayResult("Rho distribution:", smcOptions->getRhoVarModel()); 
-  ApplicationTools::displayResult("  Nb. rho categories:", smcOptions->getNumberOfRhoCateg()); 
+  ApplicationTools::displayResult("  Nb. rho categories:", nbRhoCategories); 
   ApplicationTools::displayResult("Theta distribution:", smcOptions->getThetaVarModel()); 
   ApplicationTools::displayResult("  Nb. theta categories:", smcOptions->getNumberOfThetaCateg()); 
   //Nb: model with variable Ne was not tested yet.
