@@ -97,7 +97,6 @@ int main(int argc, char *argv[]) {
   shared_ptr< OptionsContainer > smcOptions = make_shared< OptionsContainer >(params);  
   
   NUMBER_OF_AVAILABLE_THREADS = smcOptions -> getNumberOfThreads();
-    
   //Handles input sequence data 
   shared_ptr< PolymorphismData > dataSet = make_shared< PolymorphismData >(smcOptions);  
   
@@ -162,7 +161,8 @@ int main(int argc, char *argv[]) {
   }
   paramScalings.push_back(thetaScaling); //theta occupies position 0 in the vector 
   
-  shared_ptr< bpp::DiscreteDistributionInterface > rhoScaling; //rho 
+  shared_ptr< bpp::DiscreteDistributionInterface > rhoScaling; //rho
+  size_t nbRhoCategories = smcOptions -> getNumberOfRhoCateg();							     
   if(smcOptions -> getRhoVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };
@@ -187,12 +187,11 @@ int main(int argc, char *argv[]) {
     
     Vdouble hotspotRange = { lowerBoundHeat, 1e+6 }; //do not put std::limits double as the upper limit
     
-    rhoScaling = make_shared< GammaWithHotspots >(smcOptions -> getNumberOfRhoCateg(), initalShape, initalShape, initialHeat, hotspotRange);
+    rhoScaling = make_shared< GammaWithHotspots >(nbRhoCategories, initalShape, initalShape, initialHeat, hotspotRange);
     rhoScaling -> setNamespace("rho.");
     rhoScaling -> aliasParameters("alpha", "beta");
     rhoScaling -> discretize();
-  }
-  
+  } 
   else if(smcOptions -> getRhoVarModel() == "Gamma") {
     double maxRho = smcOptions -> getMaxRhoValue();
     vector<double> rhoBounds = smcOptions -> getRhoBoundaries();
@@ -211,6 +210,7 @@ int main(int argc, char *argv[]) {
       rhoScaling -> setNamespace("rho.");
       rhoScaling -> aliasParameters("alpha", "beta");
       rhoScaling -> discretize();
+      nbRhoCategories = smcOptions -> getNumberOfRhoCateg();
     } else {
       // Use equi-probable categories
       rhoScaling = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfRhoCateg(), initalShape, initalShape);
@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
   categoryTransitions.push_back(thetaTrans); //0
   
   //rho
-  shared_ptr< ParameterCategoryTransitions > rhoTrans = make_shared< ParameterCategoryTransitions >(smcOptions -> getNumberOfRhoCateg(),
+  shared_ptr< ParameterCategoryTransitions > rhoTrans = make_shared< ParameterCategoryTransitions >(nbRhoCategories,
                                                                                                     smcOptions -> getRhoVarModel(), "r");
   categoryTransitions.push_back(rhoTrans); //1
   

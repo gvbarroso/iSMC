@@ -44,7 +44,7 @@ ismc param=opt.bpp resume_optim=true optimize=false decode=true
 Then we try with a different discretization:
 
 ```bash
-ismc param=opt.bpp resume_optim=true optimize=false decode=true 
+ismc param=opt.bpp resume_optim=true optimize=false decode=true dataset_label=example2 "rho_boundaries=(0,0.0001,0.001,0.01,0.1,1,10)"
 ```
 
 Data retrived from https://www.simonsfoundation.org/simons-genome-diversity-project/ on Aug 10 2018
