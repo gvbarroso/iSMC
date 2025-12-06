@@ -14,7 +14,7 @@ Extract mask file for chr9:
 
 ```bash
 zgrep chr9 20160622.allChr.mask.bed.gz | gzip -c > 20160622.chr9.mask.bed.gz 
-```bash
+```
 
 Create a negative mask:
 
