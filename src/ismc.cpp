@@ -121,6 +121,7 @@ int main(int argc, char *argv[]) {
   vector< shared_ptr< bpp::DiscreteDistributionInterface > > paramScalings;
 
   shared_ptr< bpp::DiscreteDistributionInterface > thetaScaling; //theta
+  size_t nbThetaCategories = smcOptions -> getNumberOfThetaCateg();							     
   if(smcOptions -> getThetaVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };
@@ -149,13 +150,33 @@ int main(int argc, char *argv[]) {
   }
   
   else if(smcOptions -> getThetaVarModel() == "Gamma") {
-      
-    thetaScaling = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfThetaCateg(), initalShape, initalShape);
-    thetaScaling -> setNamespace("theta.");
-    thetaScaling -> aliasParameters("alpha", "beta");
-    thetaScaling -> discretize();
+    double maxTheta = smcOptions -> getMaxThetaValue();
+    vector<double> thetaBounds = smcOptions -> getThetaBoundaries();
+    if (maxTheta > 0) {
+      // Use equal interval between 0 and Theta max:
+      auto dist = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfThetaCateg(), initalShape, initalShape);
+      dist -> setNamespace("theta.");
+      dist -> aliasParameters("alpha", "beta");
+      dist -> restrictToConstraint(IntervalConstraint(0, maxTheta, true));
+      dist -> setDiscretizationPolicy(GammaDiscreteDistribution::DISCRETIZATION_EQUAL_INTERVAL);
+      dist -> discretize();
+      thetaScaling = dist;
+    } else if (thetaBounds.size() > 0) {
+      // Use fixed, predefined intervals:
+      thetaScaling = make_shared< GammaDiscreteDistribution >(thetaBounds, initalShape, initalShape);
+      thetaScaling -> setNamespace("theta.");
+      thetaScaling -> aliasParameters("alpha", "beta");
+      thetaScaling -> discretize();
+      nbThetaCategories = thetaBounds.size() - 1;
+    } else {
+      // Use equi-probable categories
+      thetaScaling = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfThetaCateg(), initalShape, initalShape);
+      thetaScaling -> setNamespace("theta.");
+      thetaScaling -> aliasParameters("alpha", "beta");
+      thetaScaling -> discretize();
+    }
   }
-  
+
   else {
     throw Exception("Mis-specified heterogeneity model for Theta!");
   }
@@ -227,6 +248,7 @@ int main(int argc, char *argv[]) {
   paramScalings.push_back(rhoScaling); //rho occupies position 1 in the vector 
  
   shared_ptr< bpp::DiscreteDistributionInterface > neScaling; //Ne
+  size_t nbNeCategories = smcOptions -> getNumberOfNeCateg();							     
   if(smcOptions -> getNeVarModel() == "Hotspot") {
       
     Vdouble categoryValues = { 1., 100. };
@@ -255,11 +277,31 @@ int main(int argc, char *argv[]) {
   }
   
   else if(smcOptions -> getNeVarModel() == "Gamma") {
-      
-    neScaling = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfNeCateg(), initalShape, initalShape);  
-    neScaling -> setNamespace("ne.");
-    neScaling -> aliasParameters("alpha", "beta");
-    neScaling -> discretize();
+    double maxNe = smcOptions -> getMaxNeValue();
+    vector<double> neBounds = smcOptions -> getNeBoundaries();
+    if (maxNe > 0) {
+      // Use equal interval between 0 and Rho max:
+      auto dist = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfNeCateg(), initalShape, initalShape);
+      dist -> setNamespace("ne.");
+      dist -> aliasParameters("alpha", "beta");
+      dist -> restrictToConstraint(IntervalConstraint(0, maxNe, true));
+      dist -> setDiscretizationPolicy(GammaDiscreteDistribution::DISCRETIZATION_EQUAL_INTERVAL);
+      dist -> discretize();
+      neScaling = dist;
+    } else if (neBounds.size() > 0) {
+      // Use fixed, predefined intervals:
+      neScaling = make_shared< GammaDiscreteDistribution >(neBounds, initalShape, initalShape);
+      neScaling -> setNamespace("ne.");
+      neScaling -> aliasParameters("alpha", "beta");
+      neScaling -> discretize();
+      nbNeCategories = neBounds.size() - 1;
+    } else {
+      // Use equi-probable categories
+      neScaling = make_shared< GammaDiscreteDistribution >(smcOptions -> getNumberOfNeCateg(), initalShape, initalShape);
+      neScaling -> setNamespace("ne.");
+      neScaling -> aliasParameters("alpha", "beta");
+      neScaling -> discretize();
+    }
   }
   
   else {
@@ -272,7 +314,7 @@ int main(int argc, char *argv[]) {
   vector< shared_ptr< ParameterCategoryTransitions > > categoryTransitions;
 
   //theta
-  shared_ptr< ParameterCategoryTransitions > thetaTrans = make_shared< ParameterCategoryTransitions >(smcOptions -> getNumberOfThetaCateg(),
+  shared_ptr< ParameterCategoryTransitions > thetaTrans = make_shared< ParameterCategoryTransitions >(nbThetaCategories,
                                                                                                       smcOptions -> getThetaVarModel(), "t");
   categoryTransitions.push_back(thetaTrans); //0
   
@@ -282,7 +324,7 @@ int main(int argc, char *argv[]) {
   categoryTransitions.push_back(rhoTrans); //1
   
   //ne 
-  shared_ptr< ParameterCategoryTransitions > neTrans = make_shared< ParameterCategoryTransitions >(smcOptions -> getNumberOfNeCateg(),
+  shared_ptr< ParameterCategoryTransitions > neTrans = make_shared< ParameterCategoryTransitions >(nbNeCategories,
                                                                                                    smcOptions -> getNeVarModel(), "ne");
   categoryTransitions.push_back(neTrans); //2
   ///////////////////////////////////////////////////////////////////////////////////////////

@@ -3,61 +3,57 @@
 #   Julien Dutheil
 # Created: 16/04/2018
 
-SET(ismc_CPP
-  AbstractParametrizedMatrix.cpp
-  BackupListenerOv.cpp
-  BaumWelch.cpp
-  HmmStatesLibrary.cpp
-  MarkovModulatedSmc.cpp
-  MatrixOptimizationFunction.cpp
-  MmPsmc.cpp
-  MmSmcEmissionProbabilities.cpp
-  MmSmcTransitionProbabilities.cpp
-  MultipleMmPsmc.cpp
-  ParameterCategoryTransitions.cpp
-  PolymorphismData.cpp
-  Psmc.cpp
-  RelativeStopCondition.cpp
-  SequentiallyMarkovCoalescent.cpp
-  SmcDecodingWrapper.cpp
-  SmcEmissionProbabilities.cpp
-  SmcOptimizationWrapper.cpp
-  SmcTransitionProbabilities.cpp
-  Splines.cpp
-  SplinesModel.cpp
-  Vcf.cpp
-  Global.cpp
-  ismc.cpp
+set(ismc_CPP
+    AbstractParametrizedMatrix.cpp
+    BackupListenerOv.cpp
+    BaumWelch.cpp
+    HmmStatesLibrary.cpp
+    MarkovModulatedSmc.cpp
+    MatrixOptimizationFunction.cpp
+    MmPsmc.cpp
+    MmSmcEmissionProbabilities.cpp
+    MmSmcTransitionProbabilities.cpp
+    MultipleMmPsmc.cpp
+    ParameterCategoryTransitions.cpp
+    PolymorphismData.cpp
+    Psmc.cpp
+    RelativeStopCondition.cpp
+    SequentiallyMarkovCoalescent.cpp
+    SmcDecodingWrapper.cpp
+    SmcEmissionProbabilities.cpp
+    SmcOptimizationWrapper.cpp
+    SmcTransitionProbabilities.cpp
+    Splines.cpp
+    SplinesModel.cpp
+    Vcf.cpp
+    Global.cpp
+    ismc.cpp
 )
 
-SET(ismc_mapper_CPP
-  mapper.cpp
-)
+set(ismc_mapper_CPP mapper.cpp)
 
-SET(ismc_mapper2_CPP
-  mapper2.cpp
-)
+set(ismc_mapper2_CPP mapper2.cpp)
 
-ADD_EXECUTABLE (ismc ${ismc_CPP})
-ADD_EXECUTABLE (ismc_mapper ${ismc_mapper_CPP})
-ADD_EXECUTABLE (ismc_mapper2 ${ismc_mapper2_CPP})
+add_executable(ismc ${ismc_CPP})
+add_executable(ismc_mapper ${ismc_mapper_CPP})
+add_executable(ismc_mapper2 ${ismc_mapper2_CPP})
 
-SET (ismc-targets ismc ismc_mapper ismc_mapper2)
+set(ismc-targets ismc ismc_mapper ismc_mapper2)
 
-FOREACH (target ${ismc-targets})
-  # Link (static or shared)
-  IF (BUILD_STATIC)
-    SET_TARGET_PROPERTIES (${target} PROPERTIES LINK_SEARCH_END_STATIC TRUE)
-    TARGET_LINK_LIBRARIES (${target} ${BPP_LIBS_STATIC} ${ZIPHMM_LIBS_STATIC})
-    TARGET_LINK_LIBRARIES (${target} ${LIBS})
-    TARGET_LINK_LIBRARIES (${target} Threads::Threads)
-  ELSE (BUILD_STATIC)
-    TARGET_LINK_LIBRARIES (${target} ${BPP_LIBS_SHARED} ${ZIPHMM_LIBS_SHARED})
-    TARGET_LINK_LIBRARIES (${target} ${LIBS})
-    TARGET_LINK_LIBRARIES (${target} Threads::Threads)
-    SET_TARGET_PROPERTIES (${target} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-  ENDIF (BUILD_STATIC)
-ENDFOREACH (target)
+foreach(target ${ismc-targets})
+    # Link (static or shared)
+    if(BUILD_STATIC)
+        target_link_libraries(${target} ${BPP_LIBS_STATIC} ${ZIPHMM_LIBS_STATIC} ${LIBS} Threads::Threads)
+        set_target_properties(${target} PROPERTIES LINK_SEARCH_END_STATIC TRUE)
+	target_link_options(${target} PRIVATE -static-libgcc -static-libstdc++)
+    else(BUILD_STATIC)
+	target_link_libraries(${target} ${BPP_LIBS_SHARED} ${ZIPHMM_LIBS_SHARED} ${LIBS} Threads::Threads)
+        set_target_properties(
+            ${target}
+            PROPERTIES
+                INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+        )
+    endif(BUILD_STATIC)
+endforeach(target)
 
-INSTALL(TARGETS ${ismc-targets} DESTINATION ${CMAKE_INSTALL_BINDIR})
-
+install(TARGETS ${ismc-targets} DESTINATION ${CMAKE_INSTALL_BINDIR})

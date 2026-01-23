@@ -47,8 +47,12 @@ private:
   unsigned int numberOfThetaCategories_;
   unsigned int numberOfRhoCategories_;
   unsigned int numberOfNeCategories_;
+  double maxThetaValue_;
   double maxRhoValue_;
+  double maxNeValue_;
+  std::vector<double> thetaBoundaries_;
   std::vector<double> rhoBoundaries_;
+  std::vector<double> neBoundaries_;
   unsigned int numberOfIntervals_;
   //number of time intervals for posterior decoding; diff. from optim. because of speed
   unsigned int numberOfDecodingIntervals_;
@@ -107,8 +111,12 @@ public:
   numberOfThetaCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_theta_categories", parameterOptions, 1, "", true, 4)),
   numberOfRhoCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_rho_categories", parameterOptions, 1, "", true, 4)),
   numberOfNeCategories_(bpp::ApplicationTools::getParameter<unsigned int>("number_ne_categories", parameterOptions, 1, "", true, 4)),
+  maxThetaValue_(bpp::ApplicationTools::getDoubleParameter("max_theta_value", parameterOptions, -1, "", true, 4)),
   maxRhoValue_(bpp::ApplicationTools::getDoubleParameter("max_rho_value", parameterOptions, -1, "", true, 4)),
+  maxNeValue_(bpp::ApplicationTools::getDoubleParameter("max_ne_value", parameterOptions, -1, "", true, 4)),
+  thetaBoundaries_(bpp::ApplicationTools::getVectorParameter<double>("theta_boundaries", parameterOptions, ',', "()", "", true, 4)),
   rhoBoundaries_(bpp::ApplicationTools::getVectorParameter<double>("rho_boundaries", parameterOptions, ',', "()", "", true, 4)),
+  neBoundaries_(bpp::ApplicationTools::getVectorParameter<double>("ne_boundaries", parameterOptions, ',', "()", "", true, 4)),
   numberOfIntervals_(bpp::ApplicationTools::getParameter<unsigned int>("number_intervals", parameterOptions, 40, "", true, 4) + 1), // +1 because timeInterval[0] = 0, present time
   numberOfDecodingIntervals_(bpp::ApplicationTools::getParameter<unsigned int>("number_intervals_decoding", parameterOptions, numberOfIntervals_, "", true, 4)),
   initNumberOfKnots_(bpp::ApplicationTools::getParameter<unsigned int>("init_number_knots", parameterOptions, 3, "", true, 4)),
@@ -226,11 +234,27 @@ public:
     return numberOfIntervals_;
   }
   
+  double getMaxThetaValue() const {
+    return maxThetaValue_;
+  }
+  
   double getMaxRhoValue() const {
     return maxRhoValue_;
   }
   
+  double getMaxNeValue() const {
+    return maxNeValue_;
+  }
+  
+  std::vector<double> getThetaBoundaries() const {
+    return rhoBoundaries_;
+  }
+ 
   std::vector<double> getRhoBoundaries() const {
+    return rhoBoundaries_;
+  }
+ 
+  std::vector<double> getNeBoundaries() const {
     return rhoBoundaries_;
   }
  
