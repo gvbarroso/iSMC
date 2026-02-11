@@ -1,7 +1,7 @@
 /*
  * Authors: Gustavo V. Barroso and Julien Y. Dutheil
  * Created: 16/04/2018
- * Last modified: 26/06/2019
+ * Last modified: 11/02/2026
  * Source code for iSMC.
  * Our model is based on the Sequentially Markov Coalescent (SMC) from Mcvean and Cardin (2005).
  * We use the transition probabilities as described for the MSMC (Schiffels and Durbin, 2014).
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   cout << "*            Endless ancestors                                   *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
-  cout << "* Authors: G. Barroso                    Last Modif. 23/Feb/2025 *" << endl;
+  cout << "* Authors: G. Barroso                    Last Modif. 11/Feb/2026 *" << endl;
   cout << "*          J. Dutheil                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;

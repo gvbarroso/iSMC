@@ -72,7 +72,7 @@ else(NO_DEP_CHECK)
     endif(CMAKE_INSTALL_PREFIX)
 
     include(GNUInstallDirs)
-    find_package(bpp-phyl 3.0.0 REQUIRED)
+    find_package(bpp-phyl 13 REQUIRED)
 
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
@@ -185,9 +185,9 @@ endif(NO_DEP_CHECK)
 # Packager
 set(CPACK_PACKAGE_NAME "ismc")
 set(CPACK_PACKAGE_VENDOR "Gustavo V. Barroso")
-set(CPACK_PACKAGE_VERSION "0.1.0")
-set(CPACK_PACKAGE_VERSION_MAJOR "0")
-set(CPACK_PACKAGE_VERSION_MINOR "1")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_VERSION_MAJOR "1")
+set(CPACK_PACKAGE_VERSION_MINOR "0")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The iSMC demography inferrence package.")
 #Note (Julien): we will have to take care of that when we distribute the software.
