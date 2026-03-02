@@ -16,7 +16,7 @@ using namespace bpp;
 using namespace std;
 
 
-void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, const string& discMethod, double tMax) {
+void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, const string& discMethod, double tMax, size_t numberOfPairs) {
     
   averageCoalescenceTime_.resize(numIntervals);  
   
@@ -34,7 +34,11 @@ void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, c
   }
   
   else if(discMethod == "log_even") { //even in log-space (Li & Durbin 2011)
-    discretizeTimeUsingTmax_(tMax); //new default (changed 28/12/18)  
+    discretizeTimeUsingTmax_(tMax, 0.1); //new default (changed 28/12/18)  
+  }
+  
+  else if(discMethod == "msmc2") { //even in log-space + correction for sample size (msmc2)
+    discretizeTimeUsingTmax_(tMax, 0.1 / static_cast<double>(numberOfPairs)); //new default (changed 02/03/26)  
   }
   
   else {
@@ -44,7 +48,7 @@ void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, c
   computeAverageCoalescenceTime();
 }
 
-void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, const string& discMethod, double tMax, const bpp::ParameterList& lambdas) {
+void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, const string& discMethod, double tMax, const bpp::ParameterList& lambdas, size_t numberOfPairs) {
    
   averageCoalescenceTime_.resize(numIntervals);  
   timeIntervals_.resize(numIntervals);
@@ -55,7 +59,11 @@ void SequentiallyMarkovCoalescent::setTimeIntervals(unsigned int numIntervals, c
   }
   
   else if(discMethod == "log_even"){ //even in log-space (Li & Durbin 2011)
-    discretizeTimeUsingTmax_(tMax); //new default (changed 28/12/18)  
+    discretizeTimeUsingTmax_(tMax, 0.1); //new default (changed 28/12/18)  
+  }
+  
+  else if(discMethod == "msmc2") { //even in log-space + correction for sample size (msmc2)
+    discretizeTimeUsingTmax_(tMax, 0.1 / static_cast<double>(numberOfPairs)); //new default (changed 02/03/26)  
   }
   
   else {
@@ -216,11 +224,11 @@ void SequentiallyMarkovCoalescent::discretizeTimeUsingExpBoundaries_() {
   }
 }
   
-void SequentiallyMarkovCoalescent::discretizeTimeUsingTmax_(double tMax) {
+void SequentiallyMarkovCoalescent::discretizeTimeUsingTmax_(double tMax, double alpha) {
   
   for(size_t i = 0; i < timeIntervals_.size(); ++i) {
-    timeIntervals_[i] = 0.1 * exp(static_cast< double >(i) / static_cast< double >(timeIntervals_.size())
-                        * log(1. + 10. * tMax)) - 0.1;
+    timeIntervals_[i] = alpha * exp(static_cast< double >(i) / static_cast< double >(timeIntervals_.size())
+                        * log(1. + tMax/alpha)) - alpha;
     //cout << "timeIntervals_[" << i << "] = " << timeIntervals_[i] << endl;
   }
 }

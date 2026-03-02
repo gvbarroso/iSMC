@@ -85,7 +85,7 @@ private:
   //to decouple the numerical tolerance between likelihood and parameter values
   double functionTolerance_;
   double parametersTolerance_;
-  double tMax_; //maximum time interval when timeDisc_ == "log_even"
+  double tMax_; //maximum time interval when timeDisc_ == "log_even" or "msmc2"
   //for VCF files, a threshold to decide whether to consider coordinate as missing data
   double filterQualityVcf_; //see Vcf class
   
@@ -100,7 +100,7 @@ public:
   thetaVarModel_(bpp::ApplicationTools::getStringParameter("theta_var_model", parameterOptions, "Gamma", "", true, 4)),
   rhoVarModel_(bpp::ApplicationTools::getStringParameter("rho_var_model",  parameterOptions, "Gamma", "", true, 4)),  
   neVarModel_(bpp::ApplicationTools::getStringParameter("ne_var_model", parameterOptions, "Gamma", "", true, 4)),
-  timeDisc_(bpp::ApplicationTools::getStringParameter("time_disc", parameterOptions, "log_even", "", true, 4)),
+  timeDisc_(bpp::ApplicationTools::getStringParameter("time_disc", parameterOptions, "msmc2", "", true, 4)),
   decRate_(bpp::ApplicationTools::getStringParameter("dec_rate", parameterOptions, "rho", "", true, 4)),
   sequenceFilePath_(bpp::ApplicationTools::getAFilePath("sequence_file_path", parameterOptions)),
   maskFilePath_(bpp::ApplicationTools::getAFilePath("mask_file_path", parameterOptions, false, false, "", false, "none", 4)),

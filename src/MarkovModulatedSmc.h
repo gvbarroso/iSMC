@@ -59,13 +59,14 @@ public:
   MarkovModulatedSmc(unsigned int numIntervals,
                      const std::string& timeDisc,
                      double tMax,
+		     size_t numberOfPairs,
                      const bpp::ParameterList& rho_theta, 
                      const bpp::ParameterList& lambdas,
                      std::shared_ptr< HmmStatesLibrary > hmmSates,
                      std::vector< std::shared_ptr< bpp::DiscreteDistributionInterface > > paramScalings,
                      std::vector< std::shared_ptr< ParameterCategoryTransitions > > categoryTransitions, 
                      const ParameterAlphabet& parameterAlphabet): 
-  SequentiallyMarkovCoalescent(numIntervals, timeDisc, tMax, rho_theta, lambdas),
+  SequentiallyMarkovCoalescent(numIntervals, timeDisc, tMax, numberOfPairs, rho_theta, lambdas),
   hmmSates_(hmmSates),
   paramScalings_(paramScalings),
   categoryTransitions_(categoryTransitions)
@@ -73,12 +74,13 @@ public:
   MarkovModulatedSmc(unsigned int numIntervals,
                      const std::string& timeDisc,
                      double tMax,
+		     size_t numberOfPairs,
                      const bpp::ParameterList& optimParams, //all optimised parameters
                      std::shared_ptr< HmmStatesLibrary > hmmSates,
                      std::vector< std::shared_ptr< bpp::DiscreteDistributionInterface > > paramScalings,
                      std::vector< std::shared_ptr< ParameterCategoryTransitions > > categoryTransitions, 
                      const ParameterAlphabet& parameterAlphabet): 
-  SequentiallyMarkovCoalescent(numIntervals, timeDisc, tMax, optimParams),
+  SequentiallyMarkovCoalescent(numIntervals, timeDisc, tMax, numberOfPairs, optimParams),
   hmmSates_(hmmSates),
   paramScalings_(paramScalings),
   categoryTransitions_(categoryTransitions)

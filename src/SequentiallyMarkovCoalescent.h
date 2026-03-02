@@ -40,7 +40,8 @@ public:
     addParameter_(new bpp::Parameter("rho", getParameterValue("theta") / 2., bpp::Parameter::R_PLUS_STAR));
     setTimeIntervals(smcOptions -> getNumberOfIntervals(),
                      smcOptions -> getTimeDisc(),
-                     smcOptions -> getTmax());
+                     smcOptions -> getTmax(),
+		     sequences.size());
   }
   SequentiallyMarkovCoalescent(unsigned int numIntervals,
                                const std::string& timeDisc,
@@ -55,11 +56,12 @@ public:
     computeMeanThetaAcrossDataSet_(sequences);
     addParameter_(new bpp::Parameter("rho", getParameterValue("theta") / 2., bpp::Parameter::R_PLUS_STAR));
     
-    setTimeIntervals(numIntervals, timeDisc, tMax);
+    setTimeIntervals(numIntervals, timeDisc, tMax, sequences.size());
   }
   SequentiallyMarkovCoalescent(unsigned int numIntervals,
                                const std::string& timeDisc,
                                double tMax,
+			       size_t numberOfPairs,
                                const bpp::ParameterList& rho_theta,
                                const bpp::ParameterList& lambdas): 
   AbstractParameterAliasable(""),
@@ -68,12 +70,13 @@ public:
   lambdaVector_()
   { 
     addParameters_(rho_theta);
-    setTimeIntervals(numIntervals, timeDisc, tMax);
+    setTimeIntervals(numIntervals, timeDisc, tMax, numberOfPairs);
     lambdaVector_.matchParametersValues(lambdas);
   }
   SequentiallyMarkovCoalescent(unsigned int numIntervals,
                                const std::string& timeDisc,
                                double tMax,
+			       size_t numberOfPairs,
                                const bpp::ParameterList& optimParams): 
   AbstractParameterAliasable(""),
   timeIntervals_(numIntervals),
@@ -83,7 +86,7 @@ public:
     addParameter_(new bpp::Parameter(optimParams.parameter("theta")));
     addParameter_(new bpp::Parameter(optimParams.parameter("rho")));
     
-    setTimeIntervals(numIntervals, timeDisc, tMax);
+    setTimeIntervals(numIntervals, timeDisc, tMax, numberOfPairs);
   }
 
   SequentiallyMarkovCoalescent* clone() const { return new SequentiallyMarkovCoalescent(*this); } 
@@ -120,9 +123,9 @@ public:
     return lambdaVector_;
   }
   
-  void setTimeIntervals(unsigned int numIntervals, const std::string& discMethod, double tMax);
+  void setTimeIntervals(unsigned int numIntervals, const std::string& discMethod, double tMax, size_t numberOfPairs);
 
-  void setTimeIntervals(unsigned int numIntervals, const std::string& discMethod, double tMax, const bpp::ParameterList& lambdas);
+  void setTimeIntervals(unsigned int numIntervals, const std::string& discMethod, double tMax, const bpp::ParameterList& lambdas, size_t numberOfPairs);
   
   double fetchLowerTimeBoundary(double time);
   
@@ -141,7 +144,7 @@ public:
 private:
   void discretizeTimeUsingExpBoundaries_();
   
-  void discretizeTimeUsingTmax_(double tMax);
+  void discretizeTimeUsingTmax_(double tMax, double alpha);
 
   double fetchBiHaploidTheta_(const std::vector< unsigned char >& sequence);
   
