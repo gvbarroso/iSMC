@@ -77,16 +77,16 @@ mask_file_path = ../data/altai_mask.bed
 The relative path to a tab-separated (.tsv) file specifying one genomic 'block' per line (e.g. chromosome or scaffold). Such blocks must mirror the segment structure of the input sequence file.
 This file has 7 columns with the following information:
 
-1: block ID (eg chr1)
-2: the start coordinate of the block mapped to the reference genome
-3: the end coordinate of the block mapped to the reference genome
+1: block ID (eg chr1).<br>
+2: the start coordinate of the block mapped to the reference genome.<br>
+3: the end coordinate of the block mapped to the reference genome.<br>
 
 NOTE: start and end coordinates are relative to the block, meaning they restart e.g. at every chromosome.
  
-4: '0' for all blocks
-5: the difference betwee 3rd & 2nd columns
-6: bottom cut-off position from where `ismc_mapper` should start binning single-nucleotide rates into larger genomic windows.
-7: top cut-off position until where `ismc_mapper` should bin single-nucleotide rates into larger genomic windows.
+4: '0' for all blocks.<br>
+5: the difference betwee 3rd & 2nd columns.<br>
+6: bottom cut-off position from where `ismc_mapper` should start binning single-nucleotide rates into larger genomic windows.<br>
+7: top cut-off position until where `ismc_mapper` should bin single-nucleotide rates into larger genomic windows.<br>
 
 The last two columns are convenient to 'synchronise' coordinates when using `ismc_mapper`. This can happen when you want to consider a range of sites that matches that of another file. For example, if your input sequence data for chromosome 1 starts at position 5,000 and goes until position 10,000,000, and you want to 'synchronise' it with an experimental genetic map that ranges from position 10,000 to 8,000,000, the 6th and 7th columns of the first line of your tab\_file should be  10,000 and 8,000,000. Otherwise, if you want to include all sites, they should be the same as the 2nd and 3rd columns.
 
