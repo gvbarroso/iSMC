@@ -247,7 +247,7 @@ public:
   }
   
   std::vector<double> getThetaBoundaries() const {
-    return rhoBoundaries_;
+    return thetaBoundaries_;
   }
  
   std::vector<double> getRhoBoundaries() const {
@@ -255,7 +255,7 @@ public:
   }
  
   std::vector<double> getNeBoundaries() const {
-    return rhoBoundaries_;
+    return neBoundaries_;
   }
  
   unsigned int getNumberOfDecodingIntervals() const {

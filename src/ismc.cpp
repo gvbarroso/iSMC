@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
   
   cout << endl;
   cout << "******************************************************************" << endl;
-  cout << "*                    iSMC, version 1.0.0                         *" << endl;
+  cout << "*                    iSMC, version 1.0.1                         *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*            Recombination                                       *" << endl;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   cout << "*            Endless ancestors                                   *" << endl;
   cout << "*                                                                *" << endl;
   cout << "*                                                                *" << endl;
-  cout << "* Authors: G. Barroso                    Last Modif. 11/Feb/2026 *" << endl;
+  cout << "* Authors: G. Barroso                    Last Modif. 30/Jun/2026 *" << endl;
   cout << "*          J. Dutheil                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;
