@@ -71,7 +71,7 @@ void PolymorphismData::processInputSequences() {
       maskStream.push(bzip2_decompressor());        
     }
     
-    else if(opt_ -> getMaskCompressionType() != "none") {
+    else {
       throw bpp::Exception("Mis-specified mask compression type!");
     }
   }
@@ -305,7 +305,8 @@ void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput, filtering_is
                 opt_ -> getCallableCode());
     
   vcfReader.readSequences(seqInput);
-    
+  
+  ApplicationTools::displayResult("Mask file format", opt_ -> getMaskFileType());  
   if(opt_ -> getMaskFileType() == "FASTA") {
     Fasta fastaReader;
     shared_ptr<SequenceContainerInterface> callableMask = fastaReader.readSequences(maskFile, AlphabetTools::DEFAULT_ALPHABET);
@@ -316,7 +317,7 @@ void PolymorphismData::callSnpsFromVcf(filtering_istream& seqInput, filtering_is
     vcfReader.maskSequences(maskFile, chrTable, seqBreakpoints_);
   }
   
-  else if(opt_ -> getMaskFileType() != "none") {
+  else {
     throw bpp::Exception("Mis-specified mask file type: " + opt_ -> getMaskFileType());
   }
   

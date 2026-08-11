@@ -104,7 +104,7 @@ public:
   decRate_(bpp::ApplicationTools::getStringParameter("dec_rate", parameterOptions, "rho", "", true, 4)),
   sequenceFilePath_(bpp::ApplicationTools::getAFilePath("sequence_file_path", parameterOptions)),
   maskFilePath_(bpp::ApplicationTools::getAFilePath("mask_file_path", parameterOptions, false, false, "", false, "none", 4)),
-  maskFileType_(bpp::ApplicationTools::getStringParameter("mask_file_type", parameterOptions, "none", "", true, 4)),
+  maskFileType_(bpp::ApplicationTools::getStringParameter("mask_file_type", parameterOptions, "BED", "", true, 4)),
   tabFilePath_(bpp::ApplicationTools::getAFilePath("tab_file_path", parameterOptions, false, false, "", false, "none", 4)),
   callableCode_(bpp::ApplicationTools::getVectorParameter<std::string>("callable_code", parameterOptions, ',', "1,P", "", true, 4)),
   ignoredParams_(bpp::ApplicationTools::getVectorParameter<std::string>("ignore_params", parameterOptions, ',', "none", "", true, 4)),
